@@ -8,9 +8,15 @@ main {
   aspect-ratio: 1/1;
   margin: auto;
   border: 3px solid grey;
+  cursor: pointer;
 }
 main svg {
   width: 70%;
   align-self: center;
   justify-self: center;
+}
+main .piece {
+  width: 100%;
+  height: 100%;
+  display: grid;
 }/*# sourceMappingURL=style.css.map */

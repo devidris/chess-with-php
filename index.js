@@ -2,26 +2,105 @@ class InternationalChess {
   // Select main html element
   main = document.querySelector('main');
 
+  activePiece = undefined;
+
   constructor() {
     this.setTiles();
+
+    // Adding eventlisteners to all chess pieces
+    document.querySelectorAll('.piece').forEach((piece) => {
+      piece.addEventListener('click', (e) => {
+        if (this.activePiece) {
+          // Check for capture
+          document.querySelectorAll('.piece').forEach((newpiece) => {
+            if (
+              newpiece.dataset.unique === this.activePiece &&
+              newpiece.dataset.color !== piece.dataset.color
+            ) {
+              if (
+                newpiece.dataset.color === 'white' &&
+                newpiece.dataset.piece === 'pawn'
+              ) {
+                const newpieceCoordinates = newpiece.dataset.position.split('');
+                const pieceCoordinate = piece.dataset.position.split('');
+
+                if (
+                  (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+                    newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+                  (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+                    newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+                ) {
+                  newpiece.dataset.position = piece.dataset.position;
+                  newpiece.style.gridArea = 'p' + piece.dataset.position;
+                  piece.style.display = 'none';
+                  this.activePiece = undefined;
+                }
+              }
+              if (
+                newpiece.dataset.color === 'black' &&
+                newpiece.dataset.piece === 'pawn'
+              ) {
+                const newpieceCoordinates = newpiece.dataset.position.split('');
+                const pieceCoordinate = piece.dataset.position.split('');
+
+                if (
+                  (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+                    newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+                  (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+                    newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+                ) {
+                  newpiece.dataset.position = piece.dataset.position;
+                  newpiece.style.gridArea = 'p' + piece.dataset.position;
+                  piece.style.display = 'none';
+                  this.activePiece = undefined;
+                }
+              }
+            }
+          });
+        }
+        this.activePiece = piece.dataset.unique;
+
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+
+        // Add background color to active piece
+        piece.style.backgroundColor = 'green';
+      });
+    });
+
+    // Adding eventlisteners to chess tiles
+    document.querySelectorAll('.background').forEach((tile) => {
+      tile.addEventListener('click', (e) => {
+        document.querySelectorAll('.piece').forEach((piece) => {
+          // Pawn movement
+          this.pawnMovement(piece, tile);
+        });
+      });
+    });
   }
 
+  // Seting tiles, thier position and background color
   setTiles() {
-    // Seting tiles, thier position and background color
     let tiles = '';
     let tileColorController = false;
     let tileCoordinate = [1, 1];
 
     // Color of chess tiles
-    const chessTilesColor = ['#EBECD0', '#779556'];
+    const chessTilesColor = ['#BAA379', '#60543C'];
 
     for (let i = 1; i < 65; i++) {
       tileColorController = !tileColorController;
       tiles += tileColorController
-        ? `<div style=background-color:${chessTilesColor[0]};grid-area:${
+        ? `<div class="background" data-position="${tileCoordinate.join(
+            ''
+          )}" style=background-color:${chessTilesColor[0]};grid-area:${
             'p' + tileCoordinate.join('')
           };></div>`
-        : `<div style=background-color:${chessTilesColor[1]};grid-area:${
+        : `<div class="background" data-position="${tileCoordinate.join(
+            ''
+          )}" style=background-color:${chessTilesColor[1]};grid-area:${
             'p' + tileCoordinate.join('')
           };></div>`;
       tileCoordinate[1] += 1;
@@ -36,17 +115,19 @@ class InternationalChess {
     this.initialPieciesPosition();
   }
 
+  // Display default postion of chess pieces
   initialPieciesPosition() {
     // Pawn piecies color
-    const pieceColor = ['#777', '#333'];
+    const pieceColor = ['#fff', '#000'];
 
     // Arrange first set of pawn
     let pawnSide1 = '';
     for (let i = 1; i < 9; i++) {
       pawnSide1 += `
+      <div class="pawn piece " data-firstMove="true" data-piece="pawn" data-unique="pawn2${i}" data-position="2${i}" data-color="white" style="grid-area:p2${i};z-index:10;">
       <?xml version="1.0" encoding="iso-8859-1"?>
       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-      viewBox="0 0 297 297" style="grid-area:p2${i};z-index:10;fill:${pieceColor[0]};"  xml:space="preserve">
+      viewBox="0 0 297 297" style="fill:${pieceColor[0]};"  xml:space="preserve">
       
       <path stroke="blue" d="M223.333,247h-5.926c2.607-3.811,10.798-18.024-0.727-32.248c-13.334-16.46-39.863-65.748-27.324-98.752h0.977
       c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-1.225c10.917-10.466,17.725-25.184,17.725-41.5
@@ -55,6 +136,7 @@ class InternationalChess {
       c-4.418,0-8.333,3.582-8.333,8v18c0,4.418,3.915,8,8.333,8H75v16h148v-16c5,0,8-3.582,8-8v-18C231,250.582,227.751,247,223.333,247
       z"/>
       </svg>
+      </div>
       `;
     }
     this.main.innerHTML += pawnSide1;
@@ -63,9 +145,10 @@ class InternationalChess {
     let pawnSide2 = '';
     for (let i = 1; i < 9; i++) {
       pawnSide2 += `
+      <div class="pawn piece" data-firstMove="true" data-piece="pawn" data-unique="pawn7${i}"  data-position="7${i}" data-color="black" style="grid-area:p7${i};z-index:10;">
       <?xml version="1.0" encoding="iso-8859-1"?>
-     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	  viewBox="0 0 297 297" style="grid-area:p7${i};z-index:10;fill:${pieceColor[1]};"  xml:space="preserve">
+     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="pawn" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	  viewBox="0 0 297 297" style="fill:${pieceColor[1]};"  xml:space="preserve">
   
 	  <path stroke="blue" d="M223.333,247h-5.926c2.607-3.811,10.798-18.024-0.727-32.248c-13.334-16.46-39.863-65.748-27.324-98.752h0.977
 		c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-1.225c10.917-10.466,17.725-25.184,17.725-41.5
@@ -74,6 +157,7 @@ class InternationalChess {
 		c-4.418,0-8.333,3.582-8.333,8v18c0,4.418,3.915,8,8.333,8H75v16h148v-16c5,0,8-3.582,8-8v-18C231,250.582,227.751,247,223.333,247
 		z"/>
   </svg>
+  </div>
     `;
     }
     this.main.innerHTML += pawnSide2;
@@ -82,7 +166,7 @@ class InternationalChess {
     let rooks = '';
     // Top left rook
     rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
-    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="grid-area:p11;z-index:10;fill:${pieceColor[0]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
@@ -94,7 +178,7 @@ class InternationalChess {
     `;
     // Top right rook
     rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
-    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="grid-area:p18;z-index:10;fill:${pieceColor[0]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
@@ -106,7 +190,7 @@ class InternationalChess {
     `;
     // Bottom right rook
     rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
-    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="grid-area:p81;z-index:10;fill:${pieceColor[1]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
@@ -118,7 +202,7 @@ class InternationalChess {
     `;
     // Bottom right rook
     rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
-    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="grid-area:p88;z-index:10;fill:${pieceColor[1]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
@@ -351,6 +435,63 @@ class InternationalChess {
     </svg>
     `;
     this.main.innerHTML += kings;
+  }
+
+  // Pawn movement
+  pawnMovement(piece, tile) {
+    const movement = piece.dataset.firstmove === 'true' ? 2 : 1;
+
+    // Move piece to clicked position and check if movement is valid
+    if (piece.dataset.piece === 'pawn' && piece.dataset.color === 'white') {
+      if (piece.dataset.unique === this.activePiece) {
+        const pieceCoordinate = piece.dataset.position.split('');
+        const tileCoordinate = tile.dataset.position.split('');
+        // console.log(
+        //   tileCoordinate[0],
+        //   pieceCoordinate[0],
+        //   pieceCoordinate[0] * 1 + movement
+        // );
+
+        if (
+          (tileCoordinate[0] == pieceCoordinate[0] * 1 + movement &&
+            tileCoordinate[1] == pieceCoordinate[1]) ||
+          (tileCoordinate[0] == pieceCoordinate[0] * 1 + 1 &&
+            tileCoordinate[1] == pieceCoordinate[1])
+        ) {
+          piece.style.gridArea = 'p' + tileCoordinate.join('');
+          piece.dataset.position = tile.dataset.position;
+          piece.style.backgroundColor = '';
+          this.activePiece = undefined;
+          if (piece.dataset.firstmove === 'true')
+            piece.dataset.firstmove = false;
+        }
+      }
+    }
+    // Move piece to clicked position and check if movement is valid
+    if (piece.dataset.piece === 'pawn' && piece.dataset.color === 'black') {
+      if (piece.dataset.unique === this.activePiece) {
+        const pieceCoordinate = piece.dataset.position.split('');
+        const tileCoordinate = tile.dataset.position.split('');
+        // console.log(
+        //   tileCoordinate[0],
+        //   pieceCoordinate[0],
+        //   pieceCoordinate[0] * 1 + 1
+        // );
+        if (
+          (tileCoordinate[0] == pieceCoordinate[0] * 1 - movement &&
+            tileCoordinate[1] == pieceCoordinate[1]) ||
+          (tileCoordinate[0] == pieceCoordinate[0] * 1 - 1 &&
+            tileCoordinate[1] == pieceCoordinate[1])
+        ) {
+          piece.style.gridArea = 'p' + tileCoordinate.join('');
+          piece.dataset.position = tile.dataset.position;
+          piece.style.backgroundColor = '';
+          this.activePiece = undefined;
+          if (piece.dataset.firstmove === 'true')
+            piece.dataset.firstmove = false;
+        }
+      }
+    }
   }
 }
 
