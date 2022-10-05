@@ -7,54 +7,18 @@ class InternationalChess {
   constructor() {
     this.setTiles();
 
-    // Adding eventlisteners to all chess pieces
+    // Adding eventlisteners to all chess pieces and also check for capture
     document.querySelectorAll('.piece').forEach((piece) => {
       piece.addEventListener('click', (e) => {
+        // Check for capture
         if (this.activePiece) {
-          // Check for capture
           document.querySelectorAll('.piece').forEach((newpiece) => {
             if (
               newpiece.dataset.unique === this.activePiece &&
               newpiece.dataset.color !== piece.dataset.color
             ) {
-              if (
-                newpiece.dataset.color === 'white' &&
-                newpiece.dataset.piece === 'pawn'
-              ) {
-                const newpieceCoordinates = newpiece.dataset.position.split('');
-                const pieceCoordinate = piece.dataset.position.split('');
-
-                if (
-                  (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-                    newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-                  (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-                    newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
-                ) {
-                  newpiece.dataset.position = piece.dataset.position;
-                  newpiece.style.gridArea = 'p' + piece.dataset.position;
-                  piece.style.display = 'none';
-                  this.activePiece = undefined;
-                }
-              }
-              if (
-                newpiece.dataset.color === 'black' &&
-                newpiece.dataset.piece === 'pawn'
-              ) {
-                const newpieceCoordinates = newpiece.dataset.position.split('');
-                const pieceCoordinate = piece.dataset.position.split('');
-
-                if (
-                  (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-                    newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-                  (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-                    newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
-                ) {
-                  newpiece.dataset.position = piece.dataset.position;
-                  newpiece.style.gridArea = 'p' + piece.dataset.position;
-                  piece.style.display = 'none';
-                  this.activePiece = undefined;
-                }
-              }
+              this.pawnCapture(newpiece, piece);
+              this.knightCapture(newpiece, piece);
             }
           });
         }
@@ -70,12 +34,13 @@ class InternationalChess {
       });
     });
 
-    // Adding eventlisteners to chess tiles
+    // Adding eventlisteners to chess tiles for piece movement
     document.querySelectorAll('.background').forEach((tile) => {
       tile.addEventListener('click', (e) => {
         document.querySelectorAll('.piece').forEach((piece) => {
           // Pawn movement
           this.pawnMovement(piece, tile);
+          this.knightMovement(piece, tile);
         });
       });
     });
@@ -217,10 +182,12 @@ class InternationalChess {
     // Arrange knights
     let knights = '';
     // Top left knight
-    knights += `<?xml version="1.0" encoding="utf-8"?>
-
+    knights += `<div class="knight piece" data-piece="knight" data-unique="knight12"  data-position="12" data-color="white" 
+    style="grid-area:p12;z-index:10;">
+    <?xml version="1.0" encoding="utf-8"?>
+    
   <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 32 32" style="grid-area:p12;z-index:10;fill:${pieceColor[0]}" xml:space="preserve">
+     viewBox="0 0 32 32" style="fill:${pieceColor[0]}" xml:space="preserve">
   <g>
     <path d="M7.2,16l1.1-0.2c1.6-0.3,3.3-0.5,5-0.7c-2.4,2.3-3.9,5.3-4.7,7.9h14.7c0.4-1.5,1.1-3,2.3-4.1l0.2-0.2
       c0.2-0.2,0.3-0.4,0.3-0.6C26.6,13,24.2,8,19.8,5.3c-0.8-1.4-2-2.4-3.6-2.9l-0.9-0.3C15,2,14.7,2,14.4,2.2C14.2,2.4,14,2.7,14,3v2.4
@@ -228,12 +195,15 @@ class InternationalChess {
     <path d="M6.8,25C6.3,25.5,6,26.2,6,27v2c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1v-2c0-0.8-0.3-1.5-0.8-2H6.8z"/>
   </g>
   </svg>
+  </div>
   `;
     // Top rigth knight
-    knights += `<?xml version="1.0" encoding="utf-8"?>
-
+    knights += `
+    <div class="knight piece" data-piece="knight" data-unique="knight17"  data-position="17" data-color="white" 
+    style="grid-area:p17;z-index:10;">
+    <?xml version="1.0" encoding="utf-8"?>
   <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 32 32" style="grid-area:p17;z-index:10;fill:${pieceColor[0]}" xml:space="preserve">
+     viewBox="0 0 32 32" style="fill:${pieceColor[0]}" xml:space="preserve">
   <g>
     <path d="M7.2,16l1.1-0.2c1.6-0.3,3.3-0.5,5-0.7c-2.4,2.3-3.9,5.3-4.7,7.9h14.7c0.4-1.5,1.1-3,2.3-4.1l0.2-0.2
       c0.2-0.2,0.3-0.4,0.3-0.6C26.6,13,24.2,8,19.8,5.3c-0.8-1.4-2-2.4-3.6-2.9l-0.9-0.3C15,2,14.7,2,14.4,2.2C14.2,2.4,14,2.7,14,3v2.4
@@ -241,12 +211,16 @@ class InternationalChess {
     <path d="M6.8,25C6.3,25.5,6,26.2,6,27v2c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1v-2c0-0.8-0.3-1.5-0.8-2H6.8z"/>
   </g>
   </svg>
+  </div>
   `;
     // Bottom left knight
-    knights += `<?xml version="1.0" encoding="utf-8"?>
+    knights += `
+    <div class="knight piece" data-piece="knight" data-unique="knight82"  data-position="82" data-color="black" 
+    style="grid-area:p82;z-index:10;">
+    <?xml version="1.0" encoding="utf-8"?>
 
   <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 32 32" style="grid-area:p82;z-index:10;fill:${pieceColor[1]}" xml:space="preserve">
+     viewBox="0 0 32 32" style="fill:${pieceColor[1]}" xml:space="preserve">
   <g>
     <path d="M7.2,16l1.1-0.2c1.6-0.3,3.3-0.5,5-0.7c-2.4,2.3-3.9,5.3-4.7,7.9h14.7c0.4-1.5,1.1-3,2.3-4.1l0.2-0.2
       c0.2-0.2,0.3-0.4,0.3-0.6C26.6,13,24.2,8,19.8,5.3c-0.8-1.4-2-2.4-3.6-2.9l-0.9-0.3C15,2,14.7,2,14.4,2.2C14.2,2.4,14,2.7,14,3v2.4
@@ -254,13 +228,17 @@ class InternationalChess {
     <path d="M6.8,25C6.3,25.5,6,26.2,6,27v2c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1v-2c0-0.8-0.3-1.5-0.8-2H6.8z"/>
   </g>
   </svg>
+  </div>
   `;
 
     // Top left knight
-    knights += `<?xml version="1.0" encoding="utf-8"?>
+    knights += `
+    <div class="knight piece" data-piece="knight" data-unique="knight87"  data-position="87" data-color="black" 
+    style="grid-area:p87;z-index:10;"> 
+    <?xml version="1.0" encoding="utf-8"?>
 
   <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 32 32" style="grid-area:p87;z-index:10;fill:${pieceColor[1]}" xml:space="preserve">
+     viewBox="0 0 32 32" style="fill:${pieceColor[1]}" xml:space="preserve">
   <g>
     <path d="M7.2,16l1.1-0.2c1.6-0.3,3.3-0.5,5-0.7c-2.4,2.3-3.9,5.3-4.7,7.9h14.7c0.4-1.5,1.1-3,2.3-4.1l0.2-0.2
       c0.2-0.2,0.3-0.4,0.3-0.6C26.6,13,24.2,8,19.8,5.3c-0.8-1.4-2-2.4-3.6-2.9l-0.9-0.3C15,2,14.7,2,14.4,2.2C14.2,2.4,14,2.7,14,3v2.4
@@ -268,6 +246,7 @@ class InternationalChess {
     <path d="M6.8,25C6.3,25.5,6,26.2,6,27v2c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1v-2c0-0.8-0.3-1.5-0.8-2H6.8z"/>
   </g>
   </svg>
+  </div>
   `;
     this.main.innerHTML += knights;
 
@@ -490,6 +469,96 @@ class InternationalChess {
           if (piece.dataset.firstmove === 'true')
             piece.dataset.firstmove = false;
         }
+      }
+    }
+  }
+  // Pawn capture
+  pawnCapture(newpiece, piece) {
+    if (
+      newpiece.dataset.color === 'white' &&
+      newpiece.dataset.piece === 'pawn'
+    ) {
+      const newpieceCoordinates = newpiece.dataset.position.split('');
+      const pieceCoordinate = piece.dataset.position.split('');
+
+      if (
+        (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+          newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+        (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+          newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+      ) {
+        newpiece.dataset.position = piece.dataset.position;
+        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        piece.style.display = 'none';
+        this.activePiece = undefined;
+      }
+    }
+    if (
+      newpiece.dataset.color === 'black' &&
+      newpiece.dataset.piece === 'pawn'
+    ) {
+      const newpieceCoordinates = newpiece.dataset.position.split('');
+      const pieceCoordinate = piece.dataset.position.split('');
+
+      if (
+        (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+          newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+        (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+          newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+      ) {
+        newpiece.dataset.position = piece.dataset.position;
+        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        piece.style.display = 'none';
+        this.activePiece = undefined;
+      }
+    }
+  }
+
+  // Knight movement
+  knightMovement(piece, tile) {
+    if (
+      piece.dataset.piece === 'knight' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      const pieceCoordinate = piece.dataset.position * 1;
+      const tileCoordinate = tile.dataset.position * 1;
+      if (
+        tileCoordinate == pieceCoordinate + 21 ||
+        tileCoordinate == pieceCoordinate + 19 ||
+        tileCoordinate == pieceCoordinate - 21 ||
+        tileCoordinate == pieceCoordinate - 19 ||
+        tileCoordinate == pieceCoordinate - 12 ||
+        tileCoordinate == pieceCoordinate - 8 ||
+        tileCoordinate == pieceCoordinate + 12 ||
+        tileCoordinate == pieceCoordinate + 8
+      ) {
+        piece.style.gridArea = 'p' + tileCoordinate;
+        piece.dataset.position = tile.dataset.position;
+        piece.style.backgroundColor = '';
+        this.activePiece = undefined;
+      }
+    }
+  }
+  // Knight capture
+  knightCapture(newpiece, piece) {
+    if (newpiece.dataset.piece === 'knight') {
+      const newpieceCoordinate = newpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
+
+      if (
+        pieceCoordinate == newpieceCoordinate + 21 ||
+        pieceCoordinate == newpieceCoordinate + 19 ||
+        pieceCoordinate == newpieceCoordinate - 21 ||
+        pieceCoordinate == newpieceCoordinate - 19 ||
+        pieceCoordinate == newpieceCoordinate - 12 ||
+        pieceCoordinate == newpieceCoordinate - 8 ||
+        pieceCoordinate == newpieceCoordinate + 12 ||
+        pieceCoordinate == newpieceCoordinate + 8
+      ) {
+        newpiece.dataset.position = piece.dataset.position;
+        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        piece.style.display = 'none';
+        this.activePiece = undefined;
       }
     }
   }
