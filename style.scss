@@ -15,4 +15,10 @@ main {
 
   margin: auto;
   border: 3px solid grey;
+
+  svg {
+    width: 70%;
+    align-self: center;
+    justify-self: center;
+  }
 }

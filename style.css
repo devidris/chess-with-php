@@ -8,4 +8,9 @@ main {
   aspect-ratio: 1/1;
   margin: auto;
   border: 3px solid grey;
+}
+main svg {
+  width: 70%;
+  align-self: center;
+  justify-self: center;
 }/*# sourceMappingURL=style.css.map */
