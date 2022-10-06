@@ -38,9 +38,9 @@ class InternationalChess {
     document.querySelectorAll('.background').forEach((tile) => {
       tile.addEventListener('click', (e) => {
         document.querySelectorAll('.piece').forEach((piece) => {
-          // Pawn movement
           this.pawnMovement(piece, tile);
           this.knightMovement(piece, tile);
+          this.rookMovement(piece, tile);
         });
       });
     });
@@ -130,9 +130,12 @@ class InternationalChess {
     // Arrange rooks
     let rooks = '';
     // Top left rook
-    rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
+    rooks += `
+    <div class="rook piece" data-piece="rook" data-unique="rook11"  data-position="11" data-color="white" 
+    style="grid-area:p11;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 298 298" style="grid-area:p11;z-index:10;fill:${pieceColor[0]};"xml:space="preserve">
+       viewBox="0 0 298 298" style="fill:${pieceColor[0]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
         h-16V0h-17v17h-16V0H91v83h14.057c13.668,42-6.98,103.65-21.73,124.401c-11.629,16.359-5.373,32.706-1.916,39.262
@@ -140,11 +143,15 @@ class InternationalChess {
         C224,250.338,220.986,246.92,216.923,246.538z"/>
     
     </svg>
+    </div>
     `;
     // Top right rook
-    rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
+    rooks += `
+    <div class="rook piece" data-piece="rook" data-unique="rook18"  data-position="18" data-color="white" 
+    style="grid-area:p18;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 298 298" style="grid-area:p18;z-index:10;fill:${pieceColor[0]};"xml:space="preserve">
+       viewBox="0 0 298 298" style="fill:${pieceColor[0]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
         h-16V0h-17v17h-16V0H91v83h14.057c13.668,42-6.98,103.65-21.73,124.401c-11.629,16.359-5.373,32.706-1.916,39.262
@@ -152,11 +159,15 @@ class InternationalChess {
         C224,250.338,220.986,246.92,216.923,246.538z"/>
     
     </svg>
+    </div>
     `;
     // Bottom right rook
-    rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
+    rooks += `
+    <div class="rook piece" data-piece="rook" data-unique="rook81"  data-position="81" data-color="black" 
+    style="grid-area:p81;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 298 298" style="grid-area:p81;z-index:10;fill:${pieceColor[1]};"xml:space="preserve">
+       viewBox="0 0 298 298" style="fill:${pieceColor[1]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
         h-16V0h-17v17h-16V0H91v83h14.057c13.668,42-6.98,103.65-21.73,124.401c-11.629,16.359-5.373,32.706-1.916,39.262
@@ -164,9 +175,13 @@ class InternationalChess {
         C224,250.338,220.986,246.92,216.923,246.538z"/>
     
     </svg>
+    </div>
     `;
     // Bottom right rook
-    rooks += `<?xml version="1.0" encoding="iso-8859-1"?>
+    rooks += `
+    <div class="rook piece" data-piece="rook" data-unique="rook88"  data-position="88" data-color="black" 
+    style="grid-area:p88;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="grid-area:p88;z-index:10;fill:${pieceColor[1]};"xml:space="preserve">
     
@@ -176,6 +191,7 @@ class InternationalChess {
         C224,250.338,220.986,246.92,216.923,246.538z"/>
     
     </svg>
+    </div>
     `;
     this.main.innerHTML += rooks;
 
@@ -559,6 +575,81 @@ class InternationalChess {
         newpiece.style.gridArea = 'p' + piece.dataset.position;
         piece.style.display = 'none';
         this.activePiece = undefined;
+      }
+    }
+  }
+
+  // Rook movement
+  rookMovement(piece, tile) {
+    if (
+      piece.dataset.piece === 'rook' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      const pieceCoordinate = piece.dataset.position * 1;
+      const allowablePieceMovement = [];
+
+      let xPositive = 1;
+      let xNegative = 1;
+      let yPositive = 1;
+      let yNegative = 1;
+      // Checking positive X axis movement
+      while (xPositive < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate - 10 * xPositive ||
+            pieceCoordinate + 10 * xPositive < 10
+          ) {
+            xPositive = 9;
+          }
+        });
+        if (xPositive < 9)
+          allowablePieceMovement.push(pieceCoordinate - 10 * xPositive);
+        xPositive++;
+      }
+
+      while (yNegative < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate - yNegative ||
+            (pieceCoordinate - yNegative).toString()[1] == 0 ||
+            (pieceCoordinate - yNegative).toString()[1] == 9
+          ) {
+            yNegative = 9;
+          }
+        });
+
+        // Checking negative Y axis movement
+        if (yNegative < 9)
+          allowablePieceMovement.push(pieceCoordinate - yNegative);
+        yNegative++;
+      }
+
+      // Checking positive Y axis movement
+      while (yPositive < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate + yPositive ||
+            (pieceCoordinate + yPositive).toString()[1] == 9 ||
+            (pieceCoordinate + yPositive).toString()[1] == 0
+          ) {
+            yNegative = 9;
+          }
+        });
+        if (yPositive < 9)
+          allowablePieceMovement.push(pieceCoordinate + yPositive);
+        yPositive++;
+      }
+
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+          }
+        });
       }
     }
   }
