@@ -20,6 +20,7 @@ class InternationalChess {
               this.pawnCapture(oldpiece, piece);
               this.knightCapture(oldpiece, piece);
               this.rookCapture(oldpiece, piece);
+              this.queenCapture(oldpiece, piece);
             }
           });
         }
@@ -703,7 +704,7 @@ class InternationalChess {
   }
 
   // Rook capture
-  //TODO: rook disapper after capture of oponent rook when you click on it
+  //TODO: rook disapper after capture of opponent rook when you click on it
   rookCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'rook') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -824,7 +825,7 @@ class InternationalChess {
   }
 
   // Bishop Capture
-  //TODO: bishop disapper after capture of oponent bishop when you click on it
+  //TODO: bishop disapper after capture of opponent bishop when you click on it
   bishopCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'bishop') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -834,6 +835,47 @@ class InternationalChess {
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (
+          movement + 11 == pieceCoordinate ||
+          movement - 9 == pieceCoordinate ||
+          movement - 11 == pieceCoordinate ||
+          movement + 9 == pieceCoordinate ||
+          oldpieceCoordinate + 11 == pieceCoordinate ||
+          oldpieceCoordinate - 11 == pieceCoordinate ||
+          oldpieceCoordinate + 9 == pieceCoordinate ||
+          oldpieceCoordinate - 9 == pieceCoordinate
+        ) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
+      allowablePieceMovement = [];
+    }
+  }
+
+  // Queen Capture
+  //TODO: queen disapper after capture of opponent queen when you click on it
+  queenCapture(oldpiece, piece) {
+    if (oldpiece.dataset.piece === 'queen') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
+
+      const allowablePieceMovement = [
+        ...this.calculatePossibleRookMovement(oldpiece),
+        ...this.calculatePossibleBishopMovement(oldpiece),
+      ];
+
+      allowablePieceMovement.forEach((movement) => {
+        if (
+          movement + 10 == pieceCoordinate ||
+          movement - 10 == pieceCoordinate ||
+          movement - 1 == pieceCoordinate ||
+          movement + 1 == pieceCoordinate ||
+          oldpieceCoordinate + 10 == pieceCoordinate ||
+          oldpieceCoordinate - 10 == pieceCoordinate ||
+          oldpieceCoordinate + 1 == pieceCoordinate ||
+          oldpieceCoordinate - 1 == pieceCoordinate ||
           movement + 11 == pieceCoordinate ||
           movement - 9 == pieceCoordinate ||
           movement - 11 == pieceCoordinate ||
