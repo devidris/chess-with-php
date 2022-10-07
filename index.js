@@ -592,52 +592,68 @@ class InternationalChess {
       let xNegative = 1;
       let yPositive = 1;
       let yNegative = 1;
-      // Checking positive X axis movement
-      while (xPositive < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate - 10 * xPositive ||
-            pieceCoordinate + 10 * xPositive < 10
-          ) {
-            xPositive = 9;
-          }
-        });
-        if (xPositive < 9)
-          allowablePieceMovement.push(pieceCoordinate - 10 * xPositive);
-        xPositive++;
-      }
-
-      while (yNegative < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate - yNegative ||
-            (pieceCoordinate - yNegative).toString()[1] == 0 ||
-            (pieceCoordinate - yNegative).toString()[1] == 9
-          ) {
-            yNegative = 9;
-          }
-        });
-
-        // Checking negative Y axis movement
-        if (yNegative < 9)
-          allowablePieceMovement.push(pieceCoordinate - yNegative);
-        yNegative++;
-      }
 
       // Checking positive Y axis movement
       while (yPositive < 9) {
         document.querySelectorAll('.piece').forEach((piece1) => {
           if (
-            piece1.dataset.position == pieceCoordinate + yPositive ||
-            (pieceCoordinate + yPositive).toString()[1] == 9 ||
-            (pieceCoordinate + yPositive).toString()[1] == 0
+            piece1.dataset.position == pieceCoordinate - 10 * yPositive ||
+            pieceCoordinate - 10 * yPositive < 10
+          ) {
+            yPositive = 9;
+          }
+        });
+        if (yPositive < 9)
+          allowablePieceMovement.push(pieceCoordinate - 10 * yPositive);
+        yPositive++;
+      }
+
+      // Checking negative Y axis movement
+      while (yNegative < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate + 10 * yNegative ||
+            pieceCoordinate + 10 * yNegative > 88
           ) {
             yNegative = 9;
           }
         });
-        if (yPositive < 9)
-          allowablePieceMovement.push(pieceCoordinate + yPositive);
-        yPositive++;
+        if (yNegative < 9)
+          allowablePieceMovement.push(pieceCoordinate + 10 * yNegative);
+        yNegative++;
+      }
+
+      // Checking negative X axis movement
+      while (xNegative < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate - xNegative ||
+            (pieceCoordinate - xNegative).toString()[1] == 0 ||
+            (pieceCoordinate - xNegative).toString()[1] == 9
+          ) {
+            xNegative = 9;
+          }
+        });
+
+        if (xNegative < 9)
+          allowablePieceMovement.push(pieceCoordinate - xNegative);
+        xNegative++;
+      }
+
+      // Checking positive X axis movement
+      while (xPositive < 9) {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            piece1.dataset.position == pieceCoordinate + xPositive ||
+            (pieceCoordinate + xPositive).toString()[1] == 9 ||
+            (pieceCoordinate + xPositive).toString()[1] == 0
+          ) {
+            xNegative = 9;
+          }
+        });
+        if (xPositive < 9)
+          allowablePieceMovement.push(pieceCoordinate + xPositive);
+        xPositive++;
       }
 
       if (allowablePieceMovement.length > 0) {
