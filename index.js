@@ -12,13 +12,15 @@ class InternationalChess {
       piece.addEventListener('click', (e) => {
         // Check for capture
         if (this.activePiece) {
-          document.querySelectorAll('.piece').forEach((newpiece) => {
+          document.querySelectorAll('.piece').forEach((oldpiece) => {
             if (
-              newpiece.dataset.unique === this.activePiece &&
-              newpiece.dataset.color !== piece.dataset.color
+              oldpiece.dataset.unique === this.activePiece &&
+              oldpiece.dataset.color !== piece.dataset.color
             ) {
-              this.pawnCapture(newpiece, piece);
-              this.knightCapture(newpiece, piece);
+              // Piece is same as new piece
+              this.pawnCapture(oldpiece, piece);
+              this.knightCapture(oldpiece, piece);
+              this.rookCapture(oldpiece, piece);
             }
           });
         }
@@ -489,41 +491,41 @@ class InternationalChess {
     }
   }
   // Pawn capture
-  pawnCapture(newpiece, piece) {
+  pawnCapture(oldpiece, piece) {
     if (
-      newpiece.dataset.color === 'white' &&
-      newpiece.dataset.piece === 'pawn'
+      oldpiece.dataset.color === 'white' &&
+      oldpiece.dataset.piece === 'pawn'
     ) {
-      const newpieceCoordinates = newpiece.dataset.position.split('');
+      const oldpieceCoordinates = oldpiece.dataset.position.split('');
       const pieceCoordinate = piece.dataset.position.split('');
 
       if (
-        (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-          newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-        (newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-          newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+        (oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+          oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+        (oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
+          oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
       ) {
-        newpiece.dataset.position = piece.dataset.position;
-        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        oldpiece.dataset.position = piece.dataset.position;
+        oldpiece.style.gridArea = 'p' + piece.dataset.position;
         piece.style.display = 'none';
         this.activePiece = undefined;
       }
     }
     if (
-      newpiece.dataset.color === 'black' &&
-      newpiece.dataset.piece === 'pawn'
+      oldpiece.dataset.color === 'black' &&
+      oldpiece.dataset.piece === 'pawn'
     ) {
-      const newpieceCoordinates = newpiece.dataset.position.split('');
+      const oldpieceCoordinates = oldpiece.dataset.position.split('');
       const pieceCoordinate = piece.dataset.position.split('');
 
       if (
-        (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-          newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-        (newpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-          newpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
+        (oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+          oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
+        (oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
+          oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
       ) {
-        newpiece.dataset.position = piece.dataset.position;
-        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        oldpiece.dataset.position = piece.dataset.position;
+        oldpiece.style.gridArea = 'p' + piece.dataset.position;
         piece.style.display = 'none';
         this.activePiece = undefined;
       }
@@ -556,23 +558,23 @@ class InternationalChess {
     }
   }
   // Knight capture
-  knightCapture(newpiece, piece) {
-    if (newpiece.dataset.piece === 'knight') {
-      const newpieceCoordinate = newpiece.dataset.position * 1;
+  knightCapture(oldpiece, piece) {
+    if (oldpiece.dataset.piece === 'knight') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
       if (
-        pieceCoordinate == newpieceCoordinate + 21 ||
-        pieceCoordinate == newpieceCoordinate + 19 ||
-        pieceCoordinate == newpieceCoordinate - 21 ||
-        pieceCoordinate == newpieceCoordinate - 19 ||
-        pieceCoordinate == newpieceCoordinate - 12 ||
-        pieceCoordinate == newpieceCoordinate - 8 ||
-        pieceCoordinate == newpieceCoordinate + 12 ||
-        pieceCoordinate == newpieceCoordinate + 8
+        pieceCoordinate == oldpieceCoordinate + 21 ||
+        pieceCoordinate == oldpieceCoordinate + 19 ||
+        pieceCoordinate == oldpieceCoordinate - 21 ||
+        pieceCoordinate == oldpieceCoordinate - 19 ||
+        pieceCoordinate == oldpieceCoordinate - 12 ||
+        pieceCoordinate == oldpieceCoordinate - 8 ||
+        pieceCoordinate == oldpieceCoordinate + 12 ||
+        pieceCoordinate == oldpieceCoordinate + 8
       ) {
-        newpiece.dataset.position = piece.dataset.position;
-        newpiece.style.gridArea = 'p' + piece.dataset.position;
+        oldpiece.dataset.position = piece.dataset.position;
+        oldpiece.style.gridArea = 'p' + piece.dataset.position;
         piece.style.display = 'none';
         this.activePiece = undefined;
       }
@@ -585,77 +587,7 @@ class InternationalChess {
       piece.dataset.piece === 'rook' &&
       piece.dataset.unique === this.activePiece
     ) {
-      const pieceCoordinate = piece.dataset.position * 1;
-      const allowablePieceMovement = [];
-
-      let xPositive = 1;
-      let xNegative = 1;
-      let yPositive = 1;
-      let yNegative = 1;
-
-      // Checking positive Y axis movement
-      while (yPositive < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate - 10 * yPositive ||
-            pieceCoordinate - 10 * yPositive < 10
-          ) {
-            yPositive = 9;
-          }
-        });
-        if (yPositive < 9)
-          allowablePieceMovement.push(pieceCoordinate - 10 * yPositive);
-        yPositive++;
-      }
-
-      // Checking negative Y axis movement
-      while (yNegative < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate + 10 * yNegative ||
-            pieceCoordinate + 10 * yNegative > 88
-          ) {
-            yNegative = 9;
-          }
-        });
-        if (yNegative < 9)
-          allowablePieceMovement.push(pieceCoordinate + 10 * yNegative);
-        yNegative++;
-      }
-
-      // Checking negative X axis movement
-      while (xNegative < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate - xNegative ||
-            (pieceCoordinate - xNegative).toString()[1] == 0 ||
-            (pieceCoordinate - xNegative).toString()[1] == 9
-          ) {
-            xNegative = 9;
-          }
-        });
-
-        if (xNegative < 9)
-          allowablePieceMovement.push(pieceCoordinate - xNegative);
-        xNegative++;
-      }
-
-      // Checking positive X axis movement
-      while (xPositive < 9) {
-        document.querySelectorAll('.piece').forEach((piece1) => {
-          if (
-            piece1.dataset.position == pieceCoordinate + xPositive ||
-            (pieceCoordinate + xPositive).toString()[1] == 9 ||
-            (pieceCoordinate + xPositive).toString()[1] == 0
-          ) {
-            xNegative = 9;
-          }
-        });
-        if (xPositive < 9)
-          allowablePieceMovement.push(pieceCoordinate + xPositive);
-        xPositive++;
-      }
-
+      const allowablePieceMovement = this.calculatePossibleRookMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
@@ -667,6 +599,112 @@ class InternationalChess {
           }
         });
       }
+    }
+  }
+
+  // Calculate all the movement a rook can go
+  calculatePossibleRookMovement(piece) {
+    const allowablePieceMovement = [];
+    const pieceCoordinate = piece.dataset.position * 1;
+
+    let xPositive = 1;
+    let xNegative = 1;
+    let yPositive = 1;
+    let yNegative = 1;
+
+    // Checking positive Y axis movement
+    while (yPositive < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate - 10 * yPositive ||
+          pieceCoordinate - 10 * yPositive < 10
+        ) {
+          yPositive = 9;
+        }
+      });
+      if (yPositive < 9)
+        allowablePieceMovement.push(pieceCoordinate - 10 * yPositive);
+      yPositive++;
+    }
+
+    // Checking negative Y axis movement
+    while (yNegative < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate + 10 * yNegative ||
+          pieceCoordinate + 10 * yNegative > 88
+        ) {
+          yNegative = 9;
+        }
+      });
+      if (yNegative < 9)
+        allowablePieceMovement.push(pieceCoordinate + 10 * yNegative);
+      yNegative++;
+    }
+
+    // Checking negative X axis movement
+    while (xNegative < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate - xNegative ||
+          (pieceCoordinate - xNegative).toString()[1] == 0 ||
+          (pieceCoordinate - xNegative).toString()[1] == 9
+        ) {
+          xNegative = 9;
+        }
+      });
+
+      if (xNegative < 9) {
+        allowablePieceMovement.push(pieceCoordinate - xNegative);
+      }
+      xNegative++;
+    }
+
+    // Checking positive X axis movement
+    while (xPositive < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate + xPositive ||
+          (pieceCoordinate + xPositive).toString()[1] == 9 ||
+          (pieceCoordinate + xPositive).toString()[1] == 0
+        ) {
+          xNegative = 10;
+        }
+      });
+      if (xPositive < 9) {
+        allowablePieceMovement.push(pieceCoordinate + xPositive);
+      }
+      xPositive++;
+    }
+    return allowablePieceMovement;
+  }
+
+  // Rook capture
+  rookCapture(oldpiece, piece) {
+    if (oldpiece.dataset.piece === 'rook') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
+
+      const allowablePieceMovement =
+        this.calculatePossibleRookMovement(oldpiece);
+      allowablePieceMovement.forEach((movement) => {
+        if (
+          movement + 10 == pieceCoordinate ||
+          movement - 10 == pieceCoordinate ||
+          movement - 1 == pieceCoordinate ||
+          movement + 1 == pieceCoordinate ||
+          oldpieceCoordinate + 10 == pieceCoordinate ||
+          oldpieceCoordinate - 10 == pieceCoordinate ||
+          oldpieceCoordinate + 1 == pieceCoordinate ||
+          oldpieceCoordinate - 1 == pieceCoordinate 
+
+        ) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
     }
   }
 }
