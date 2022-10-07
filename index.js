@@ -17,7 +17,6 @@ class InternationalChess {
               oldpiece.dataset.unique === this.activePiece &&
               oldpiece.dataset.color !== piece.dataset.color
             ) {
-              // Piece is same as new piece
               this.pawnCapture(oldpiece, piece);
               this.knightCapture(oldpiece, piece);
               this.rookCapture(oldpiece, piece);
@@ -43,6 +42,7 @@ class InternationalChess {
           this.pawnMovement(piece, tile);
           this.knightMovement(piece, tile);
           this.rookMovement(piece, tile);
+          this.bishopMovement(piece, tile);
         });
       });
     });
@@ -271,9 +271,12 @@ class InternationalChess {
     // Arrange Bishops
     let bishops = '';
     // Top left bishop
-    bishops += `<?xml version="1.0" encoding="iso-8859-1"?>
+    bishops += `
+    <div class="bishop piece" data-piece="bishop" data-unique="bishop13"  data-position="13" data-color="white" 
+    style="grid-area:p13;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 297.08 297.08" style="grid-area:p13;z-index:10;fill:${pieceColor[0]}"  xml:space="preserve">
+       viewBox="0 0 297.08 297.08" style="fill:${pieceColor[0]}"  xml:space="preserve">
       <path d="M206.873,255.08h-3.41c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.137-39.546-24.448-64.4h3.57
         c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-4.333v-4.285c13-8.971,20.511-23.502,20.511-39.914
         c0-10.332-7.011-26.11-15.819-41.721l-18.553,18.595c-3.111,3.111-8.182,3.111-11.294,0.001l-0.921-0.933
@@ -284,11 +287,15 @@ class InternationalChess {
         c-9.031,11.064-2.926,22.263-0.712,25.6h-3.411c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118v-17.069
         c4-0.493,7-3.853,7-7.931v-9C214.54,258.662,211.291,255.08,206.873,255.08z"/>
     </svg>
+    </div>
     `;
     // Top right bishop
-    bishops += `<?xml version="1.0" encoding="iso-8859-1"?>
+    bishops += `
+    <div class="bishop piece" data-piece="bishop" data-unique="bishop16"  data-position="16" data-color="white" 
+    style="grid-area:p16;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 297.08 297.08" style="grid-area:p16;z-index:10;fill:${pieceColor[0]}"  xml:space="preserve">
+       viewBox="0 0 297.08 297.08" style="fill:${pieceColor[0]}"  xml:space="preserve">
       <path d="M206.873,255.08h-3.41c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.137-39.546-24.448-64.4h3.57
         c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-4.333v-4.285c13-8.971,20.511-23.502,20.511-39.914
         c0-10.332-7.011-26.11-15.819-41.721l-18.553,18.595c-3.111,3.111-8.182,3.111-11.294,0.001l-0.921-0.933
@@ -299,11 +306,15 @@ class InternationalChess {
         c-9.031,11.064-2.926,22.263-0.712,25.6h-3.411c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118v-17.069
         c4-0.493,7-3.853,7-7.931v-9C214.54,258.662,211.291,255.08,206.873,255.08z"/>
     </svg>
+    </div>
     `;
     // Bottom left bishop
-    bishops += `<?xml version="1.0" encoding="iso-8859-1"?>
+    bishops += `
+    <div class="bishop piece" data-piece="bishop" data-unique="bishop83"  data-position="83" data-color="black" 
+    style="grid-area:p83;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 297.08 297.08" style="grid-area:p83;z-index:10;fill:${pieceColor[1]}"  xml:space="preserve">
+       viewBox="0 0 297.08 297.08" style="fill:${pieceColor[1]}"  xml:space="preserve">
       <path d="M206.873,255.08h-3.41c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.137-39.546-24.448-64.4h3.57
         c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-4.333v-4.285c13-8.971,20.511-23.502,20.511-39.914
         c0-10.332-7.011-26.11-15.819-41.721l-18.553,18.595c-3.111,3.111-8.182,3.111-11.294,0.001l-0.921-0.933
@@ -314,11 +325,15 @@ class InternationalChess {
         c-9.031,11.064-2.926,22.263-0.712,25.6h-3.411c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118v-17.069
         c4-0.493,7-3.853,7-7.931v-9C214.54,258.662,211.291,255.08,206.873,255.08z"/>
     </svg>
+    </div>
     `;
     // Buttom right bishop
-    bishops += `<?xml version="1.0" encoding="iso-8859-1"?>
+    bishops += `
+    <div class="bishop piece" data-piece="bishop" data-unique="bishop86"  data-position="86" data-color="black" 
+    style="grid-area:p86;z-index:10;">
+    <?xml version="1.0" encoding="iso-8859-1"?>
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 297.08 297.08" style="grid-area:p86;z-index:10;fill:${pieceColor[1]}"  xml:space="preserve">
+       viewBox="0 0 297.08 297.08" style="fill:${pieceColor[1]}"  xml:space="preserve">
       <path d="M206.873,255.08h-3.41c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.137-39.546-24.448-64.4h3.57
         c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-4.333v-4.285c13-8.971,20.511-23.502,20.511-39.914
         c0-10.332-7.011-26.11-15.819-41.721l-18.553,18.595c-3.111,3.111-8.182,3.111-11.294,0.001l-0.921-0.933
@@ -329,14 +344,17 @@ class InternationalChess {
         c-9.031,11.064-2.926,22.263-0.712,25.6h-3.411c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118v-17.069
         c4-0.493,7-3.853,7-7.931v-9C214.54,258.662,211.291,255.08,206.873,255.08z"/>
     </svg>
+    </div>
     `;
     this.main.innerHTML += bishops;
 
     // Arrange queens
     let queens = `
+    <div class="queen piece" data-piece="queen" data-unique="queen14"  data-position="14" data-color="white" 
+    style="grid-area:p14;z-index:10;">
     <?xml version="1.0" encoding="iso-8859-1"?>
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 297.77 297.77"style="grid-area:p14;z-index:10;fill:${pieceColor[0]}"  xml:space="preserve">
+	 viewBox="0 0 297.77 297.77"style="fill:${pieceColor[0]}"  xml:space="preserve">
 	<path d="M207.218,255.77h-3.369c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.129-39.546-24.438-64.4h3.519
 		c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.582-8-8-8c4.418,0,8-3.582,8-8v-1c0-4.418-3.249-8-7.667-8h-4.626
 		c-2.064-21.741,1.078-43.054,5.959-54.666c1.86-4.425,4.118-7.79,6.296-10.334h1.371c4.418,0,7.667-3.582,7.667-8v-1
@@ -349,9 +367,12 @@ class InternationalChess {
 		c4-0.493,7-3.853,7-7.931v-9C214.885,259.352,211.636,255.77,207.218,255.77z"/>
 
 </svg>
+</div>
+<div class="queen piece" data-piece="queen" data-unique="queen84"  data-position="84" data-color="black" 
+    style="grid-area:p84;z-index:10;">
 <?xml version="1.0" encoding="iso-8859-1"?>
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 297.77 297.77"style="grid-area:p84;z-index:10;fill:${pieceColor[1]}"  xml:space="preserve">
+	 viewBox="0 0 297.77 297.77"style="fill:${pieceColor[1]}"  xml:space="preserve">
 	<path d="M207.218,255.77h-3.369c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.129-39.546-24.438-64.4h3.519
 		c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.582-8-8-8c4.418,0,8-3.582,8-8v-1c0-4.418-3.249-8-7.667-8h-4.626
 		c-2.064-21.741,1.078-43.054,5.959-54.666c1.86-4.425,4.118-7.79,6.296-10.334h1.371c4.418,0,7.667-3.582,7.667-8v-1
@@ -364,6 +385,7 @@ class InternationalChess {
 		c4-0.493,7-3.853,7-7.931v-9C214.885,259.352,211.636,255.77,207.218,255.77z"/>
 
 </svg>
+<div>
 
     `;
     this.main.innerHTML += queens;
@@ -584,10 +606,10 @@ class InternationalChess {
   // Rook movement
   rookMovement(piece, tile) {
     if (
-      piece.dataset.piece === 'rook' &&
+      (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
-      const allowablePieceMovement = this.calculatePossibleRookMovement(piece);
+      let allowablePieceMovement = this.calculatePossibleRookMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
@@ -599,6 +621,7 @@ class InternationalChess {
           }
         });
       }
+      allowablePieceMovement = [];
     }
   }
 
@@ -680,6 +703,7 @@ class InternationalChess {
   }
 
   // Rook capture
+  //TODO: rook disapper after capture of oponent rook when you click on it
   rookCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'rook') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -696,8 +720,7 @@ class InternationalChess {
           oldpieceCoordinate + 10 == pieceCoordinate ||
           oldpieceCoordinate - 10 == pieceCoordinate ||
           oldpieceCoordinate + 1 == pieceCoordinate ||
-          oldpieceCoordinate - 1 == pieceCoordinate 
-
+          oldpieceCoordinate - 1 == pieceCoordinate
         ) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
@@ -705,6 +728,128 @@ class InternationalChess {
           this.activePiece = undefined;
         }
       });
+      allowablePieceMovement = [];
+    }
+  }
+
+  // Calculate all the movement a bishop can go
+  calculatePossibleBishopMovement(piece) {
+    const pieceCoordinate = piece.dataset.position * 1;
+    const allowablePieceMovement = [];
+
+    let firstAngle = 1;
+    let secondAngle = 1;
+    let thirdAngle = 1;
+    let fourthAngle = 1;
+    while (firstAngle < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate - 11 * firstAngle ||
+          pieceCoordinate - 11 * firstAngle < 10
+        ) {
+          firstAngle = 9;
+        }
+      });
+      if (firstAngle < 9)
+        allowablePieceMovement.push(pieceCoordinate - 11 * firstAngle);
+      firstAngle++;
+    }
+
+    while (secondAngle < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate + 11 * secondAngle ||
+          pieceCoordinate + 11 * secondAngle > 88
+        ) {
+          secondAngle = 9;
+        }
+      });
+      if (secondAngle < 9)
+        allowablePieceMovement.push(pieceCoordinate + 11 * secondAngle);
+      secondAngle++;
+    }
+
+    while (thirdAngle < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate - 9 * thirdAngle ||
+          pieceCoordinate - 9 * thirdAngle < 10
+        ) {
+          thirdAngle = 9;
+        }
+      });
+      if (thirdAngle < 9)
+        allowablePieceMovement.push(pieceCoordinate - 9 * thirdAngle);
+      thirdAngle++;
+    }
+
+    while (fourthAngle < 9) {
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        if (
+          piece1.dataset.position == pieceCoordinate + 9 * fourthAngle ||
+          pieceCoordinate + 9 * fourthAngle < 10
+        ) {
+          fourthAngle = 9;
+        }
+      });
+      if (fourthAngle < 9)
+        allowablePieceMovement.push(pieceCoordinate + 9 * fourthAngle);
+      fourthAngle++;
+    }
+    return allowablePieceMovement;
+  }
+
+  // Bishop movement
+  // Added queen since it have similar movement
+  bishopMovement(piece, tile) {
+    if (
+      (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      const tileCoordinate = tile.dataset.position * 1;
+      let allowablePieceMovement = this.calculatePossibleBishopMovement(piece);
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+          }
+        });
+      }
+      allowablePieceMovement = [];
+    }
+  }
+
+  // Bishop Capture
+  //TODO: bishop disapper after capture of oponent bishop when you click on it
+  bishopCapture(oldpiece, piece) {
+    if (oldpiece.dataset.piece === 'bishop') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
+
+      const allowablePieceMovement =
+        this.calculatePossibleBishopMovement(oldpiece);
+      allowablePieceMovement.forEach((movement) => {
+        if (
+          movement + 11 == pieceCoordinate ||
+          movement - 9 == pieceCoordinate ||
+          movement - 11 == pieceCoordinate ||
+          movement + 9 == pieceCoordinate ||
+          oldpieceCoordinate + 11 == pieceCoordinate ||
+          oldpieceCoordinate - 11 == pieceCoordinate ||
+          oldpieceCoordinate + 9 == pieceCoordinate ||
+          oldpieceCoordinate - 9 == pieceCoordinate
+        ) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
+      allowablePieceMovement = [];
     }
   }
 }
