@@ -19,4 +19,48 @@ main .piece {
   width: 100%;
   height: 100%;
   display: grid;
+}
+
+.wrong-input svg {
+  -webkit-animation: wrong 0.3s;
+          animation: wrong 0.3s;
+  -webkit-animation-iteration-count: 2;
+          animation-iteration-count: 2;
+  transition: 0.3s;
+}
+
+@-webkit-keyframes wrong {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  25% {
+    transform: rotateZ(30deg);
+  }
+  50% {
+    transform: rotateZ(0deg);
+  }
+  75% {
+    transform: rotateZ(-30deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+  }
+}
+
+@keyframes wrong {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  25% {
+    transform: rotateZ(30deg);
+  }
+  50% {
+    transform: rotateZ(0deg);
+  }
+  75% {
+    transform: rotateZ(-30deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+  }
 }/*# sourceMappingURL=style.css.map */

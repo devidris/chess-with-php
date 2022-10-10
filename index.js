@@ -94,7 +94,7 @@ class InternationalChess {
     let pawnSide1 = '';
     for (let i = 1; i < 9; i++) {
       pawnSide1 += `
-      <div class="pawn piece " data-firstMove="true" data-piece="pawn" data-unique="pawn2${i}" data-position="2${i}" data-color="white" style="grid-area:p2${i};z-index:10;">
+      <div class="pawn piece" data-firstMove="true" data-piece="pawn" data-unique="pawn2${i}" data-position="2${i}" data-color="white" style="grid-area:p2${i};z-index:10;">
       <?xml version="1.0" encoding="iso-8859-1"?>
       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
       viewBox="0 0 297 297" style="fill:${pieceColor[0]};"  xml:space="preserve">
@@ -517,11 +517,13 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'pawn' &&
       piece.dataset.unique === this.activePiece
     ) {
+      let wrongInut = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossiblePawnMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
+            wrongInut = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -532,6 +534,12 @@ style="grid-area:p85;z-index:10;">
             }
           }
         });
+      }
+      if (wrongInut) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
       }
     }
   }
@@ -601,11 +609,13 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'knight' &&
       piece.dataset.unique === this.activePiece
     ) {
+      let wrongInut = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleKnightMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
+            wrongInut = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -616,6 +626,12 @@ style="grid-area:p85;z-index:10;">
             }
           }
         });
+      }
+      if (wrongInut) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
       }
     }
   }
@@ -649,10 +665,12 @@ style="grid-area:p85;z-index:10;">
       (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
-      let allowablePieceMovement = this.calculatePossibleRookMovement(piece);
+      let wrongInut = true;
+      const allowablePieceMovement = this.calculatePossibleRookMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
+            wrongInut = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -661,7 +679,12 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      allowablePieceMovement = [];
+      if (wrongInut) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
+      }
     }
   }
 
@@ -846,11 +869,13 @@ style="grid-area:p85;z-index:10;">
       (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
+      let wrongInut = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleBishopMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
+            let wrongInut = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -859,7 +884,12 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      allowablePieceMovement = [];
+      if (wrongInut) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
+      }
     }
   }
 
@@ -940,32 +970,26 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'king' &&
       piece.dataset.unique === this.activePiece
     ) {
+      let wrongInut = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
+            let wrongInut = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
           }
-          const tileCoordinate = tile.dataset.position * 1;
-          let allowablePieceMovement =
-            this.calculatePossibleKingMovement(piece);
-          if (allowablePieceMovement.length > 0) {
-            allowablePieceMovement.forEach((movement) => {
-              if (tile.dataset.position == movement) {
-                const tileCoordinate = tile.dataset.position;
-                piece.style.gridArea = 'p' + tileCoordinate;
-                piece.dataset.position = tile.dataset.position;
-                piece.style.backgroundColor = '';
-                this.activePiece = undefined;
-              }
-            });
-          }
         });
+      }
+      if (wrongInut) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
       }
     }
   }

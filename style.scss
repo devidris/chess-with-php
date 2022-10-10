@@ -29,3 +29,29 @@ main {
     display: grid;
   }
 }
+
+.wrong-input {
+  svg {
+    animation: wrong 0.3s;
+    animation-iteration-count: 2;
+    transition: 0.3s;
+  }
+}
+
+@keyframes wrong {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  25% {
+    transform: rotateZ(30deg);
+  }
+  50% {
+    transform: rotateZ(0deg);
+  }
+  75% {
+    transform: rotateZ(-30deg);
+  }
+  100% {
+    transform: rotateZ(0deg);
+  }
+}
