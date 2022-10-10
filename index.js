@@ -463,59 +463,76 @@ style="grid-area:p85;z-index:10;">
     this.main.innerHTML += kings;
   }
 
+  //Calculate pawn movement
+  calculatePossiblePawnMovement(piece) {
+    const possiblePawnMovements =
+      piece.dataset.color === 'black' ? [-10, -20] : [10, 20];
+    const occupiedPawnMovements = [];
+    const allowablePieceMovement = [];
+    const pieceCoordinate = piece.dataset.position * 1;
+
+    if (
+      piece.dataset.piece === 'pawn' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      // Check if it is first movement
+      if (
+        possiblePawnMovements.length > 1 &&
+        piece.dataset.firstmove === 'false'
+      ) {
+        possiblePawnMovements.pop();
+      }
+      // Upade possible pawn movement
+      possiblePawnMovements.forEach((movement) => {
+        possiblePawnMovements[possiblePawnMovements.indexOf(movement)] =
+          piece.dataset.position * 1 + movement;
+      });
+
+      // Check which position has been occupuied
+      possiblePawnMovements.forEach((movement) => {
+        document.querySelectorAll('.piece').forEach((piece1) => {
+          if (
+            movement == piece1.dataset.position &&
+            piece.dataset.color == piece1.dataset.color
+          ) {
+            occupiedPawnMovements.push(movement);
+          }
+        });
+      });
+
+      // Update which position Pawncan move
+      possiblePawnMovements.forEach((movement) => {
+        if (!occupiedPawnMovements.includes(movement)) {
+          allowablePieceMovement.push(movement);
+        }
+      });
+    }
+    console.log(allowablePieceMovement);
+    return allowablePieceMovement;
+  }
+
   // Pawn movement
   pawnMovement(piece, tile) {
-    const movement = piece.dataset.firstmove === 'true' ? 2 : 1;
-
-    // Move piece to clicked position and check if movement is valid
-    if (piece.dataset.piece === 'pawn' && piece.dataset.color === 'white') {
-      if (piece.dataset.unique === this.activePiece) {
-        const pieceCoordinate = piece.dataset.position.split('');
-        const tileCoordinate = tile.dataset.position.split('');
-        // console.log(
-        //   tileCoordinate[0],
-        //   pieceCoordinate[0],
-        //   pieceCoordinate[0] * 1 + movement
-        // );
-
-        if (
-          (tileCoordinate[0] == pieceCoordinate[0] * 1 + movement &&
-            tileCoordinate[1] == pieceCoordinate[1]) ||
-          (tileCoordinate[0] == pieceCoordinate[0] * 1 + 1 &&
-            tileCoordinate[1] == pieceCoordinate[1])
-        ) {
-          piece.style.gridArea = 'p' + tileCoordinate.join('');
-          piece.dataset.position = tile.dataset.position;
-          piece.style.backgroundColor = '';
-          this.activePiece = undefined;
-          if (piece.dataset.firstmove === 'true')
-            piece.dataset.firstmove = false;
-        }
-      }
-    }
-    // Move piece to clicked position and check if movement is valid
-    if (piece.dataset.piece === 'pawn' && piece.dataset.color === 'black') {
-      if (piece.dataset.unique === this.activePiece) {
-        const pieceCoordinate = piece.dataset.position.split('');
-        const tileCoordinate = tile.dataset.position.split('');
-        // console.log(
-        //   tileCoordinate[0],
-        //   pieceCoordinate[0],
-        //   pieceCoordinate[0] * 1 + 1
-        // );
-        if (
-          (tileCoordinate[0] == pieceCoordinate[0] * 1 - movement &&
-            tileCoordinate[1] == pieceCoordinate[1]) ||
-          (tileCoordinate[0] == pieceCoordinate[0] * 1 - 1 &&
-            tileCoordinate[1] == pieceCoordinate[1])
-        ) {
-          piece.style.gridArea = 'p' + tileCoordinate.join('');
-          piece.dataset.position = tile.dataset.position;
-          piece.style.backgroundColor = '';
-          this.activePiece = undefined;
-          if (piece.dataset.firstmove === 'true')
-            piece.dataset.firstmove = false;
-        }
+    if (
+      piece.dataset.piece === 'pawn' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      const tileCoordinate = tile.dataset.position * 1;
+      let allowablePieceMovement = this.calculatePossiblePawnMovement(piece);
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+            if (piece.dataset.firstmove === 'true') {
+              piece.dataset.firstmove = false;
+            }
+            console.log(piece.dataset.firstmove);
+          }
+        });
       }
     }
   }
@@ -903,31 +920,37 @@ style="grid-area:p85;z-index:10;">
 
   // King Movement
   kingMovement(piece, tile) {
-    const tileCoordinate = tile.dataset.position * 1;
-    let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
-    if (allowablePieceMovement.length > 0) {
-      allowablePieceMovement.forEach((movement) => {
-        if (tile.dataset.position == movement) {
-          const tileCoordinate = tile.dataset.position;
-          piece.style.gridArea = 'p' + tileCoordinate;
-          piece.dataset.position = tile.dataset.position;
-          piece.style.backgroundColor = '';
-          this.activePiece = undefined;
-        }
-        const tileCoordinate = tile.dataset.position * 1;
-        let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
-        if (allowablePieceMovement.length > 0) {
-          allowablePieceMovement.forEach((movement) => {
-            if (tile.dataset.position == movement) {
-              const tileCoordinate = tile.dataset.position;
-              piece.style.gridArea = 'p' + tileCoordinate;
-              piece.dataset.position = tile.dataset.position;
-              piece.style.backgroundColor = '';
-              this.activePiece = undefined;
-            }
-          });
-        }
-      });
+    if (
+      piece.dataset.piece === 'king' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      const tileCoordinate = tile.dataset.position * 1;
+      let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+          }
+          const tileCoordinate = tile.dataset.position * 1;
+          let allowablePieceMovement =
+            this.calculatePossibleKingMovement(piece);
+          if (allowablePieceMovement.length > 0) {
+            allowablePieceMovement.forEach((movement) => {
+              if (tile.dataset.position == movement) {
+                const tileCoordinate = tile.dataset.position;
+                piece.style.gridArea = 'p' + tileCoordinate;
+                piece.dataset.position = tile.dataset.position;
+                piece.style.backgroundColor = '';
+                this.activePiece = undefined;
+              }
+            });
+          }
+        });
+      }
     }
   }
 
