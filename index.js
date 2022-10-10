@@ -507,7 +507,7 @@ style="grid-area:p85;z-index:10;">
         }
       });
     }
-    console.log(allowablePieceMovement);
+
     return allowablePieceMovement;
   }
 
@@ -530,7 +530,6 @@ style="grid-area:p85;z-index:10;">
             if (piece.dataset.firstmove === 'true') {
               piece.dataset.firstmove = false;
             }
-            console.log(piece.dataset.firstmove);
           }
         });
       }
@@ -578,28 +577,45 @@ style="grid-area:p85;z-index:10;">
     }
   }
 
+  //Calculate knight movement
+  calculatePossibleKnightMovement(piece) {
+    const possibleKnightMovements = [-21, -19, -12, -8, 8, 12, 19, 21];
+    const pieceCoordinate = piece.dataset.position * 1; // Update which position Pawncan move
+
+    if (
+      piece.dataset.piece === 'knight' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      // Upade possible knight movement
+      possibleKnightMovements.forEach((movement) => {
+        possibleKnightMovements[possibleKnightMovements.indexOf(movement)] =
+          piece.dataset.position * 1 + movement;
+      });
+    }
+    const allowablePieceMovement = possibleKnightMovements;
+    return allowablePieceMovement;
+  }
   // Knight movement
   knightMovement(piece, tile) {
     if (
       piece.dataset.piece === 'knight' &&
       piece.dataset.unique === this.activePiece
     ) {
-      const pieceCoordinate = piece.dataset.position * 1;
       const tileCoordinate = tile.dataset.position * 1;
-      if (
-        tileCoordinate == pieceCoordinate + 21 ||
-        tileCoordinate == pieceCoordinate + 19 ||
-        tileCoordinate == pieceCoordinate - 21 ||
-        tileCoordinate == pieceCoordinate - 19 ||
-        tileCoordinate == pieceCoordinate - 12 ||
-        tileCoordinate == pieceCoordinate - 8 ||
-        tileCoordinate == pieceCoordinate + 12 ||
-        tileCoordinate == pieceCoordinate + 8
-      ) {
-        piece.style.gridArea = 'p' + tileCoordinate;
-        piece.dataset.position = tile.dataset.position;
-        piece.style.backgroundColor = '';
-        this.activePiece = undefined;
+      let allowablePieceMovement = this.calculatePossibleKnightMovement(piece);
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+            if (piece.dataset.firstmove === 'true') {
+              piece.dataset.firstmove = false;
+            }
+          }
+        });
       }
     }
   }
