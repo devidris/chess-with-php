@@ -517,13 +517,13 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'pawn' &&
       piece.dataset.unique === this.activePiece
     ) {
-      let wrongInut = true;
+      let wrongInput = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossiblePawnMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
-            wrongInut = false;
+            wrongInput = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -535,7 +535,7 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      if (wrongInut) {
+      if (wrongInput) {
         piece.classList.add('wrong-input');
         setTimeout(() => {
           piece.classList.remove('wrong-input');
@@ -609,13 +609,13 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'knight' &&
       piece.dataset.unique === this.activePiece
     ) {
-      let wrongInut = true;
+      let wrongInput = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleKnightMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
-            wrongInut = false;
+            wrongInput = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -627,7 +627,7 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      if (wrongInut) {
+      if (wrongInput) {
         piece.classList.add('wrong-input');
         setTimeout(() => {
           piece.classList.remove('wrong-input');
@@ -662,15 +662,16 @@ style="grid-area:p85;z-index:10;">
   // Rook movement
   rookMovement(piece, tile) {
     if (
-      (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') &&
+      piece.dataset.piece === 'rook' &&
       piece.dataset.unique === this.activePiece
     ) {
-      let wrongInut = true;
-      const allowablePieceMovement = this.calculatePossibleRookMovement(piece);
+      let wrongInput = true;
+      const tileCoordinate = tile.dataset.position * 1;
+      let allowablePieceMovement = this.calculatePossibleRookMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
-            wrongInut = false;
+            wrongInput = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -679,7 +680,7 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      if (wrongInut) {
+      if (wrongInput) {
         piece.classList.add('wrong-input');
         setTimeout(() => {
           piece.classList.remove('wrong-input');
@@ -690,79 +691,136 @@ style="grid-area:p85;z-index:10;">
 
   // Calculate all the movement a rook can go
   calculatePossibleRookMovement(piece) {
-    const allowablePieceMovement = [];
+    const possibleRookMovementsYpositive = [];
+    const possibleRookMovementsXpositive = [];
+    const possibleRookMovementsYnegative = [];
+    const possibleRookMovementsXnegative = [];
     const pieceCoordinate = piece.dataset.position * 1;
-
-    let xPositive = 1;
-    let xNegative = 1;
-    let yPositive = 1;
-    let yNegative = 1;
-
-    // Checking positive Y axis movement
-    while (yPositive < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        if (
-          piece1.dataset.position == pieceCoordinate - 10 * yPositive ||
-          pieceCoordinate - 10 * yPositive < 10
-        ) {
-          yPositive = 9;
+    if (
+      piece.dataset.piece === 'rook' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      // Update Rook movement Y positive
+      for (let i = 1; i < 9; i++) {
+        if (piece.dataset.position - i * 10 > 10) {
+          possibleRookMovementsYpositive.push(piece.dataset.position - i * 10);
         }
-      });
-      if (yPositive < 9)
-        allowablePieceMovement.push(pieceCoordinate - 10 * yPositive);
-      yPositive++;
-    }
-
-    // Checking negative Y axis movement
-    while (yNegative < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        if (
-          piece1.dataset.position == pieceCoordinate + 10 * yNegative ||
-          pieceCoordinate + 10 * yNegative > 88
-        ) {
-          yNegative = 9;
-        }
-      });
-      if (yNegative < 9)
-        allowablePieceMovement.push(pieceCoordinate + 10 * yNegative);
-      yNegative++;
-    }
-
-    // Checking negative X axis movement
-    while (xNegative < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        if (
-          piece1.dataset.position == pieceCoordinate - xNegative ||
-          (pieceCoordinate - xNegative).toString()[1] == 0 ||
-          (pieceCoordinate - xNegative).toString()[1] == 9
-        ) {
-          xNegative = 9;
-        }
-      });
-
-      if (xNegative < 9) {
-        allowablePieceMovement.push(pieceCoordinate - xNegative);
       }
-      xNegative++;
-    }
 
-    // Checking positive X axis movement
-    while (xPositive < 9) {
+      // Check which position has been occupuied
       document.querySelectorAll('.piece').forEach((piece1) => {
-        if (
-          piece1.dataset.position == pieceCoordinate + xPositive ||
-          (pieceCoordinate + xPositive).toString()[1] == 9 ||
-          (pieceCoordinate + xPositive).toString()[1] == 0
-        ) {
-          xNegative = 10;
+        const position = piece1.dataset.position * 1;
+        if (possibleRookMovementsYpositive.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleRookMovementsYpositive.splice(
+              -1,
+              possibleRookMovementsYpositive.indexOf(position) + 1
+            );
+          } else {
+            possibleRookMovementsYpositive.splice(
+              -1,
+              possibleRookMovementsYpositive.indexOf(position)
+            );
+          }
         }
       });
-      if (xPositive < 9) {
-        allowablePieceMovement.push(pieceCoordinate + xPositive);
+
+      // Update Rook movement Y negative
+      for (let i = 1; i < 9; i++) {
+        if (piece.dataset.position * 1 + i * 10 < 89) {
+          possibleRookMovementsYnegative.push(
+            piece.dataset.position * 1 + i * 10
+          );
+        }
       }
-      xPositive++;
+
+      // Check which position has been occupuied
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleRookMovementsYnegative.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleRookMovementsYnegative.splice(
+              -1,
+              possibleRookMovementsYnegative.indexOf(position) + 1
+            );
+          } else {
+            possibleRookMovementsYnegative.splice(
+              -1,
+              possibleRookMovementsYnegative.indexOf(position)
+            );
+          }
+        }
+      });
+
+      // Update Rook movement X positive
+      let overboardMovementsXpositive = false;
+      for (let i = 1; i < 9; i++) {
+        if (
+          `${piece.dataset.position * 1 + i}`[1] * 1 < 9 &&
+          !overboardMovementsXpositive
+        ) {
+          possibleRookMovementsXpositive.push(piece.dataset.position * 1 + i);
+        } else {
+          overboardMovementsXpositive = true;
+        }
+      }
+
+      // Check which position has been occupuied
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleRookMovementsXpositive.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleRookMovementsXpositive.splice(
+              -1,
+              possibleRookMovementsXpositive.indexOf(position) + 1
+            );
+          } else {
+            possibleRookMovementsXpositive.splice(
+              -1,
+              possibleRookMovementsXpositive.indexOf(position)
+            );
+          }
+        }
+      });
+
+      // Update Rook movement X negative
+      let overboardMovementsXnegative = false;
+      for (let i = 1; i < 9; i++) {
+        if (
+          `${piece.dataset.position * 1 - i}`[1] * 1 > 0 &&
+          !overboardMovementsXnegative
+        ) {
+          possibleRookMovementsXnegative.push(piece.dataset.position * 1 - i);
+        } else {
+          overboardMovementsXnegative = true;
+        }
+      }
+
+      // Check which position has been occupuied
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleRookMovementsXnegative.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleRookMovementsXnegative.splice(
+              -1,
+              possibleRookMovementsXnegative.indexOf(position) + 1
+            );
+          } else {
+            possibleRookMovementsXnegative.splice(
+              -1,
+              possibleRookMovementsXnegative.indexOf(position)
+            );
+          }
+        }
+      });
+
+      return [
+        ...possibleRookMovementsXnegative,
+        ...possibleRookMovementsXpositive,
+        ...possibleRookMovementsYnegative,
+        ...possibleRookMovementsYpositive,
+      ];
     }
-    return allowablePieceMovement;
   }
 
   // Rook capture
@@ -775,23 +833,13 @@ style="grid-area:p85;z-index:10;">
       const allowablePieceMovement =
         this.calculatePossibleRookMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
-        if (
-          movement + 10 == pieceCoordinate ||
-          movement - 10 == pieceCoordinate ||
-          movement - 1 == pieceCoordinate ||
-          movement + 1 == pieceCoordinate ||
-          oldpieceCoordinate + 10 == pieceCoordinate ||
-          oldpieceCoordinate - 10 == pieceCoordinate ||
-          oldpieceCoordinate + 1 == pieceCoordinate ||
-          oldpieceCoordinate - 1 == pieceCoordinate
-        ) {
+        if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.style.display = 'none';
           this.activePiece = undefined;
         }
       });
-      allowablePieceMovement = [];
     }
   }
 
@@ -869,13 +917,13 @@ style="grid-area:p85;z-index:10;">
       (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
-      let wrongInut = true;
+      let wrongInput = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleBishopMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
-            let wrongInut = false;
+            wrongInput = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -884,7 +932,7 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      if (wrongInut) {
+      if (wrongInput) {
         piece.classList.add('wrong-input');
         setTimeout(() => {
           piece.classList.remove('wrong-input');
@@ -970,13 +1018,13 @@ style="grid-area:p85;z-index:10;">
       piece.dataset.piece === 'king' &&
       piece.dataset.unique === this.activePiece
     ) {
-      let wrongInut = true;
+      let wrongInput = true;
       const tileCoordinate = tile.dataset.position * 1;
       let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
       if (allowablePieceMovement.length > 0) {
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
-            let wrongInut = false;
+            wrongInput = false;
             const tileCoordinate = tile.dataset.position;
             piece.style.gridArea = 'p' + tileCoordinate;
             piece.dataset.position = tile.dataset.position;
@@ -985,7 +1033,7 @@ style="grid-area:p85;z-index:10;">
           }
         });
       }
-      if (wrongInut) {
+      if (wrongInput) {
         piece.classList.add('wrong-input');
         setTimeout(() => {
           piece.classList.remove('wrong-input');
@@ -1034,7 +1082,7 @@ style="grid-area:p85;z-index:10;">
   }
 
   //King capture
-  kingCapture(piece, tile) {
+  kingCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'king') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
