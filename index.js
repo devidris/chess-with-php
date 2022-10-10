@@ -824,7 +824,6 @@ style="grid-area:p85;z-index:10;">
   }
 
   // Rook capture
-  //TODO: rook disapper after capture of opponent rook when you click on it
   rookCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'rook') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -845,69 +844,161 @@ style="grid-area:p85;z-index:10;">
 
   // Calculate all the movement a bishop can go
   calculatePossibleBishopMovement(piece) {
+    let possibleBishopMovementsYpositive = [];
+    let possibleBishopMovementsXpositive = [];
+    let possibleBishopMovementsYnegative = [];
+    let possibleBishopMovementsXnegative = [];
     const pieceCoordinate = piece.dataset.position * 1;
-    const allowablePieceMovement = [];
-
-    let firstAngle = 1;
-    let secondAngle = 1;
-    let thirdAngle = 1;
-    let fourthAngle = 1;
-    while (firstAngle < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
+    if (
+      piece.dataset.piece === 'bishop' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      // Update Bishop movement Y positive
+      let overboardMovementsYpositive = false;
+      for (let i = 1; i < 9; i++) {
         if (
-          piece1.dataset.position == pieceCoordinate - 11 * firstAngle ||
-          pieceCoordinate - 11 * firstAngle < 10
+          `${piece.dataset.position * 1 - i * 11}`[1] * 1 > 0 &&
+          !overboardMovementsYpositive
         ) {
-          firstAngle = 9;
+          possibleBishopMovementsYpositive.push(
+            piece.dataset.position * 1 - i * 11
+          );
+        } else {
+          overboardMovementsYpositive = true;
+        }
+      }
+      // Check which position has been occupuied
+      possibleBishopMovementsYpositive =
+        possibleBishopMovementsYpositive.reverse();
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleBishopMovementsYpositive.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleBishopMovementsYpositive.splice(
+              0,
+              possibleBishopMovementsYpositive.indexOf(position) + 1
+            );
+          } else {
+            possibleBishopMovementsYpositive.splice(
+              0,
+              possibleBishopMovementsYpositive.indexOf(position)
+            );
+          }
         }
       });
-      if (firstAngle < 9)
-        allowablePieceMovement.push(pieceCoordinate - 11 * firstAngle);
-      firstAngle++;
-    }
 
-    while (secondAngle < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
+      // Update Bishop movement X positive
+      let overboardMovementsXpositive = false;
+      for (let i = 1; i < 9; i++) {
         if (
-          piece1.dataset.position == pieceCoordinate + 11 * secondAngle ||
-          pieceCoordinate + 11 * secondAngle > 88
+          `${piece.dataset.position * 1 - i * 9}`[1] * 1 < 9 &&
+          !overboardMovementsXpositive
         ) {
-          secondAngle = 9;
+          possibleBishopMovementsXpositive.push(
+            piece.dataset.position * 1 - i * 9
+          );
+        } else {
+          overboardMovementsXpositive = true;
+        }
+      }
+      // Check which position has been occupuied
+      possibleBishopMovementsXpositive =
+        possibleBishopMovementsXpositive.reverse();
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleBishopMovementsXpositive.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleBishopMovementsXpositive.splice(
+              0,
+              possibleBishopMovementsXpositive.indexOf(position) + 1
+            );
+          } else {
+            possibleBishopMovementsXpositive.splice(
+              0,
+              possibleBishopMovementsXpositive.indexOf(position)
+            );
+          }
         }
       });
-      if (secondAngle < 9)
-        allowablePieceMovement.push(pieceCoordinate + 11 * secondAngle);
-      secondAngle++;
-    }
 
-    while (thirdAngle < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
+      // Update Bishop movement Y negative
+      let overboardMovementsYnegative = false;
+      for (let i = 1; i < 9; i++) {
         if (
-          piece1.dataset.position == pieceCoordinate - 9 * thirdAngle ||
-          pieceCoordinate - 9 * thirdAngle < 10
+          `${piece.dataset.position * 1 + i * 11}`[1] * 1 < 9 &&
+          !overboardMovementsYnegative &&
+          piece.dataset.position * 1 + i * 11 < 89
         ) {
-          thirdAngle = 9;
+          possibleBishopMovementsYnegative.push(
+            piece.dataset.position * 1 + i * 11
+          );
+        } else {
+          overboardMovementsYnegative = true;
+        }
+      }
+
+      // Check which position has been occupuied
+      possibleBishopMovementsYnegative =
+        possibleBishopMovementsYnegative.reverse();
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleBishopMovementsYnegative.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleBishopMovementsYnegative.splice(
+              0,
+              possibleBishopMovementsYnegative.indexOf(position) + 1
+            );
+          } else {
+            possibleBishopMovementsYnegative.splice(
+              0,
+              possibleBishopMovementsYnegative.indexOf(position)
+            );
+          }
         }
       });
-      if (thirdAngle < 9)
-        allowablePieceMovement.push(pieceCoordinate - 9 * thirdAngle);
-      thirdAngle++;
-    }
 
-    while (fourthAngle < 9) {
-      document.querySelectorAll('.piece').forEach((piece1) => {
+      // Update Bishop movement Y negative
+      let overboardMovementsXnegative = false;
+      for (let i = 1; i < 9; i++) {
         if (
-          piece1.dataset.position == pieceCoordinate + 9 * fourthAngle ||
-          pieceCoordinate + 9 * fourthAngle < 10
+          `${piece.dataset.position * 1 + i * 9}`[1] * 1 > 0 &&
+          !overboardMovementsXnegative &&
+          piece.dataset.position * 1 + i * 9 < 89
         ) {
-          fourthAngle = 9;
+          possibleBishopMovementsXnegative.push(
+            piece.dataset.position * 1 + i * 9
+          );
+        } else {
+          overboardMovementsXnegative = true;
+        }
+      }
+      // Check which position has been occupuied
+      possibleBishopMovementsXnegative =
+        possibleBishopMovementsXnegative.reverse();
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (possibleBishopMovementsXnegative.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            possibleBishopMovementsXnegative.splice(
+              0,
+              possibleBishopMovementsXnegative.indexOf(position) + 1
+            );
+          } else {
+            possibleBishopMovementsXnegative.splice(
+              0,
+              possibleBishopMovementsXnegative.indexOf(position)
+            );
+          }
         }
       });
-      if (fourthAngle < 9)
-        allowablePieceMovement.push(pieceCoordinate + 9 * fourthAngle);
-      fourthAngle++;
     }
-    return allowablePieceMovement;
+
+    return [
+      ...possibleBishopMovementsXnegative,
+      ...possibleBishopMovementsXpositive,
+      ...possibleBishopMovementsYnegative,
+      ...possibleBishopMovementsYpositive,
+    ];
   }
 
   // Bishop movement
@@ -952,14 +1043,7 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (
-          movement + 11 == pieceCoordinate ||
-          movement - 9 == pieceCoordinate ||
-          movement - 11 == pieceCoordinate ||
-          movement + 9 == pieceCoordinate ||
-          oldpieceCoordinate + 11 == pieceCoordinate ||
-          oldpieceCoordinate - 11 == pieceCoordinate ||
-          oldpieceCoordinate + 9 == pieceCoordinate ||
-          oldpieceCoordinate - 9 == pieceCoordinate
+          movement  == pieceCoordinate 
         ) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
