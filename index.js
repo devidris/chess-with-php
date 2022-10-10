@@ -45,6 +45,7 @@ class InternationalChess {
           this.knightMovement(piece, tile);
           this.rookMovement(piece, tile);
           this.bishopMovement(piece, tile);
+          this.queenMovement(piece, tile);
           this.kingMovement(piece, tile);
         });
       });
@@ -512,6 +513,7 @@ style="grid-area:p85;z-index:10;">
   }
 
   // Pawn movement
+  //TODO: pawn turn to queen,rook or bishop after reaching other end
   pawnMovement(piece, tile) {
     if (
       piece.dataset.piece === 'pawn' &&
@@ -691,13 +693,13 @@ style="grid-area:p85;z-index:10;">
 
   // Calculate all the movement a rook can go
   calculatePossibleRookMovement(piece) {
-    const possibleRookMovementsYpositive = [];
-    const possibleRookMovementsXpositive = [];
-    const possibleRookMovementsYnegative = [];
-    const possibleRookMovementsXnegative = [];
-    const pieceCoordinate = piece.dataset.position * 1;
+    let possibleRookMovementsYpositive = [];
+    let possibleRookMovementsXpositive = [];
+    let possibleRookMovementsYnegative = [];
+    let possibleRookMovementsXnegative = [];
+    let pieceCoordinate = piece.dataset.position * 1;
     if (
-      piece.dataset.piece === 'rook' &&
+      (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
       // Update Rook movement Y positive
@@ -706,19 +708,19 @@ style="grid-area:p85;z-index:10;">
           possibleRookMovementsYpositive.push(piece.dataset.position - i * 10);
         }
       }
-
+      possibleRookMovementsYpositive = possibleRookMovementsYpositive.reverse();
       // Check which position has been occupuied
       document.querySelectorAll('.piece').forEach((piece1) => {
         const position = piece1.dataset.position * 1;
         if (possibleRookMovementsYpositive.includes(position)) {
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsYpositive.splice(
-              -1,
+              0,
               possibleRookMovementsYpositive.indexOf(position) + 1
             );
           } else {
             possibleRookMovementsYpositive.splice(
-              -1,
+              0,
               possibleRookMovementsYpositive.indexOf(position)
             );
           }
@@ -735,17 +737,18 @@ style="grid-area:p85;z-index:10;">
       }
 
       // Check which position has been occupuied
+      possibleRookMovementsYnegative = possibleRookMovementsYnegative.reverse();
       document.querySelectorAll('.piece').forEach((piece1) => {
         const position = piece1.dataset.position * 1;
         if (possibleRookMovementsYnegative.includes(position)) {
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsYnegative.splice(
-              -1,
+              0,
               possibleRookMovementsYnegative.indexOf(position) + 1
             );
           } else {
             possibleRookMovementsYnegative.splice(
-              -1,
+              0,
               possibleRookMovementsYnegative.indexOf(position)
             );
           }
@@ -764,19 +767,19 @@ style="grid-area:p85;z-index:10;">
           overboardMovementsXpositive = true;
         }
       }
-
       // Check which position has been occupuied
+      possibleRookMovementsXpositive = possibleRookMovementsXpositive.reverse();
       document.querySelectorAll('.piece').forEach((piece1) => {
         const position = piece1.dataset.position * 1;
         if (possibleRookMovementsXpositive.includes(position)) {
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsXpositive.splice(
-              -1,
+              0,
               possibleRookMovementsXpositive.indexOf(position) + 1
             );
           } else {
             possibleRookMovementsXpositive.splice(
-              -1,
+              0,
               possibleRookMovementsXpositive.indexOf(position)
             );
           }
@@ -797,30 +800,31 @@ style="grid-area:p85;z-index:10;">
       }
 
       // Check which position has been occupuied
+      possibleRookMovementsXnegative = possibleRookMovementsXnegative.reverse();
       document.querySelectorAll('.piece').forEach((piece1) => {
         const position = piece1.dataset.position * 1;
         if (possibleRookMovementsXnegative.includes(position)) {
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsXnegative.splice(
-              -1,
+              0,
               possibleRookMovementsXnegative.indexOf(position) + 1
             );
           } else {
             possibleRookMovementsXnegative.splice(
-              -1,
+              0,
               possibleRookMovementsXnegative.indexOf(position)
             );
           }
         }
       });
-
-      return [
-        ...possibleRookMovementsXnegative,
-        ...possibleRookMovementsXpositive,
-        ...possibleRookMovementsYnegative,
-        ...possibleRookMovementsYpositive,
-      ];
     }
+
+    return [
+      ...possibleRookMovementsXnegative,
+      ...possibleRookMovementsXpositive,
+      ...possibleRookMovementsYnegative,
+      ...possibleRookMovementsYpositive,
+    ];
   }
 
   // Rook capture
@@ -850,7 +854,7 @@ style="grid-area:p85;z-index:10;">
     let possibleBishopMovementsXnegative = [];
     const pieceCoordinate = piece.dataset.position * 1;
     if (
-      piece.dataset.piece === 'bishop' &&
+      (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
       piece.dataset.unique === this.activePiece
     ) {
       // Update Bishop movement Y positive
@@ -1005,7 +1009,7 @@ style="grid-area:p85;z-index:10;">
   // Added queen since it have similar movement
   bishopMovement(piece, tile) {
     if (
-      (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
+      piece.dataset.piece === 'bishop' &&
       piece.dataset.unique === this.activePiece
     ) {
       let wrongInput = true;
@@ -1033,7 +1037,6 @@ style="grid-area:p85;z-index:10;">
   }
 
   // Bishop Capture
-  //TODO: bishop disapper after capture of opponent bishop when you click on it
   bishopCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'bishop') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -1042,9 +1045,7 @@ style="grid-area:p85;z-index:10;">
       const allowablePieceMovement =
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
-        if (
-          movement  == pieceCoordinate 
-        ) {
+        if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.style.display = 'none';
@@ -1055,8 +1056,39 @@ style="grid-area:p85;z-index:10;">
     }
   }
 
+  // Queen movement
+  queenMovement(piece, tile) {
+    if (
+      piece.dataset.piece === 'queen' &&
+      piece.dataset.unique === this.activePiece
+    ) {
+      let wrongInput = true;
+      const tileCoordinate = tile.dataset.position * 1;
+      let allowablePieceMovement = [
+        ...this.calculatePossibleBishopMovement(piece),
+        ...this.calculatePossibleRookMovement(piece),
+      ];
+      if (allowablePieceMovement.length > 0) {
+        allowablePieceMovement.forEach((movement) => {
+          if (tile.dataset.position == movement) {
+            wrongInput = false;
+            const tileCoordinate = tile.dataset.position;
+            piece.style.gridArea = 'p' + tileCoordinate;
+            piece.dataset.position = tile.dataset.position;
+            piece.style.backgroundColor = '';
+            this.activePiece = undefined;
+          }
+        });
+      }
+      if (wrongInput) {
+        piece.classList.add('wrong-input');
+        setTimeout(() => {
+          piece.classList.remove('wrong-input');
+        }, 600);
+      }
+    }
+  }
   // Queen Capture
-  //TODO: queen disapper after capture of opponent queen when you click on it
   queenCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'queen') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
@@ -1126,7 +1158,7 @@ style="grid-area:p85;z-index:10;">
     }
   }
 
-  //Calculate king movement
+  // Calculate king movement
   calculatePossibleKingMovement(piece) {
     const possibleKingMovements = [-9, -10, -11, -1, 1, 9, 10, 11];
     const occupiedKingMovements = [];
@@ -1165,7 +1197,9 @@ style="grid-area:p85;z-index:10;">
     return allowablePieceMovement;
   }
 
-  //King capture
+  // King capture
+  // TODO: checkmake
+  // TODO: stalemake
   kingCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'king') {
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
