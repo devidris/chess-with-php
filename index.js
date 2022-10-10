@@ -21,6 +21,7 @@ class InternationalChess {
               this.knightCapture(oldpiece, piece);
               this.rookCapture(oldpiece, piece);
               this.queenCapture(oldpiece, piece);
+              this.kingCapture(oldpiece, piece);
             }
           });
         }
@@ -44,7 +45,7 @@ class InternationalChess {
           this.knightMovement(piece, tile);
           this.rookMovement(piece, tile);
           this.bishopMovement(piece, tile);
-          this.knightMovement(piece, tile);
+          this.kingMovement(piece, tile);
         });
       });
     });
@@ -901,7 +902,7 @@ style="grid-area:p85;z-index:10;">
   }
 
   // King Movement
-  knightMovement(piece, tile) {
+  kingMovement(piece, tile) {
     const tileCoordinate = tile.dataset.position * 1;
     let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
     if (allowablePieceMovement.length > 0) {
@@ -912,6 +913,19 @@ style="grid-area:p85;z-index:10;">
           piece.dataset.position = tile.dataset.position;
           piece.style.backgroundColor = '';
           this.activePiece = undefined;
+        }
+        const tileCoordinate = tile.dataset.position * 1;
+        let allowablePieceMovement = this.calculatePossibleKingMovement(piece);
+        if (allowablePieceMovement.length > 0) {
+          allowablePieceMovement.forEach((movement) => {
+            if (tile.dataset.position == movement) {
+              const tileCoordinate = tile.dataset.position;
+              piece.style.gridArea = 'p' + tileCoordinate;
+              piece.dataset.position = tile.dataset.position;
+              piece.style.backgroundColor = '';
+              this.activePiece = undefined;
+            }
+          });
         }
       });
     }
@@ -937,7 +951,10 @@ style="grid-area:p85;z-index:10;">
       // Check which position has been occupuied
       possibleKingMovements.forEach((movement) => {
         document.querySelectorAll('.piece').forEach((piece1) => {
-          if (movement == piece1.dataset.position) {
+          if (
+            movement == piece1.dataset.position &&
+            piece.dataset.color == piece1.dataset.color
+          ) {
             occupiedKingMovements.push(movement);
           }
         });
@@ -951,6 +968,26 @@ style="grid-area:p85;z-index:10;">
       });
     }
     return allowablePieceMovement;
+  }
+
+  //King capture
+  kingCapture(piece, tile) {
+    if (oldpiece.dataset.piece === 'king') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
+
+      const allowablePieceMovement =
+        this.calculatePossibleBishopMovement(oldpiece);
+      allowablePieceMovement.forEach((movement) => {
+        if (movement == pieceCoordinate) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
+      allowablePieceMovement = [];
+    }
   }
 }
 
