@@ -1,6 +1,7 @@
 class InternationalChess {
   // Select main html element
   main = document.querySelector('main');
+  kingPosition = [15, 85];
 
   activePiece = undefined;
 
@@ -41,6 +42,13 @@ class InternationalChess {
     document.querySelectorAll('.background').forEach((tile) => {
       tile.addEventListener('click', (e) => {
         document.querySelectorAll('.piece').forEach((piece) => {
+          if (piece.dataset.unique === this.activePiece) {
+            const opponentColor =
+              piece.dataset.color === 'black' ? 'white' : 'black';
+            const allOpponetMovement = this.calculateAllMovement(opponentColor);
+            // console.log(allOpponetMovement);
+          }
+
           this.pawnMovement(piece, tile);
           this.knightMovement(piece, tile);
           this.rookMovement(piece, tile);
@@ -139,7 +147,7 @@ class InternationalChess {
     rooks += `
     <div class="rook piece" data-piece="rook" data-unique="rook11"  data-position="11" data-color="white" 
     style="grid-area:p11;z-index:10;">
-    <?xml version="1.0" encoding="iso-8859-1"?>
+  
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="fill:${pieceColor[0]};"xml:space="preserve">
     
@@ -155,7 +163,7 @@ class InternationalChess {
     rooks += `
     <div class="rook piece" data-piece="rook" data-unique="rook18"  data-position="18" data-color="white" 
     style="grid-area:p18;z-index:10;">
-    <?xml version="1.0" encoding="iso-8859-1"?>
+   
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="fill:${pieceColor[0]};"xml:space="preserve">
     
@@ -171,7 +179,7 @@ class InternationalChess {
     rooks += `
     <div class="rook piece" data-piece="rook" data-unique="rook81"  data-position="81" data-color="black" 
     style="grid-area:p81;z-index:10;">
-    <?xml version="1.0" encoding="iso-8859-1"?>
+  
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
        viewBox="0 0 298 298" style="fill:${pieceColor[1]};"xml:space="preserve">
     
@@ -187,9 +195,9 @@ class InternationalChess {
     rooks += `
     <div class="rook piece" data-piece="rook" data-unique="rook88"  data-position="88" data-color="black" 
     style="grid-area:p88;z-index:10;">
-    <?xml version="1.0" encoding="iso-8859-1"?>
+  
     <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-       viewBox="0 0 298 298" style="grid-area:p88;z-index:10;fill:${pieceColor[1]};"xml:space="preserve">
+       viewBox="0 0 298 298" style="fill:${pieceColor[1]};"xml:space="preserve">
     
       <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
         h-16V0h-17v17h-16V0H91v83h14.057c13.668,42-6.98,103.65-21.73,124.401c-11.629,16.359-5.373,32.706-1.916,39.262
@@ -206,7 +214,7 @@ class InternationalChess {
     // Top left knight
     knights += `<div class="knight piece" data-piece="knight" data-unique="knight12"  data-position="12" data-color="white" 
     style="grid-area:p12;z-index:10;">
-    <?xml version="1.0" encoding="utf-8"?>
+ 
     
   <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
      viewBox="0 0 32 32" style="fill:${pieceColor[0]}" xml:space="preserve">
@@ -545,65 +553,79 @@ style="grid-area:p85;z-index:10;">
       }
     }
   }
+
+  calculatePossiblePawnCapture(piece) {
+    const possiblePawnCapture =
+      piece.dataset.color === 'black' ? [-11, -9] : [11, 9];
+
+    const updatedPossiblePawnCapture = [];
+
+    const pieceCoordinate = piece.dataset.position * 1;
+
+    if (piece.dataset.piece === 'pawn') {
+      possiblePawnCapture.forEach((movement) => {
+        if (
+          `${pieceCoordinate + movement}`[1] != 0 &&
+          `${pieceCoordinate + movement}`[1] != 9
+        ) {
+          updatedPossiblePawnCapture.push(pieceCoordinate + movement);
+        }
+      });
+    }
+    return updatedPossiblePawnCapture;
+  }
   // Pawn capture
   pawnCapture(oldpiece, piece) {
-    if (
-      oldpiece.dataset.color === 'white' &&
-      oldpiece.dataset.piece === 'pawn'
-    ) {
-      const oldpieceCoordinates = oldpiece.dataset.position.split('');
-      const pieceCoordinate = piece.dataset.position.split('');
+    if (oldpiece.dataset.piece === 'pawn') {
+      const oldpieceCoordinate = oldpiece.dataset.position * 1;
+      const pieceCoordinate = piece.dataset.position * 1;
 
-      if (
-        (oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-          oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-        (oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0] &&
-          oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
-      ) {
-        oldpiece.dataset.position = piece.dataset.position;
-        oldpiece.style.gridArea = 'p' + piece.dataset.position;
-        piece.style.display = 'none';
-        this.activePiece = undefined;
-      }
-    }
-    if (
-      oldpiece.dataset.color === 'black' &&
-      oldpiece.dataset.piece === 'pawn'
-    ) {
-      const oldpieceCoordinates = oldpiece.dataset.position.split('');
-      const pieceCoordinate = piece.dataset.position.split('');
-
-      if (
-        (oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-          oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0]) ||
-        (oldpieceCoordinates[0] * 1 - 1 == pieceCoordinate[0] &&
-          oldpieceCoordinates[0] * 1 + 1 == pieceCoordinate[0])
-      ) {
-        oldpiece.dataset.position = piece.dataset.position;
-        oldpiece.style.gridArea = 'p' + piece.dataset.position;
-        piece.style.display = 'none';
-        this.activePiece = undefined;
-      }
+      const allowablePieceMovement =
+        this.calculatePossiblePawnCapture(oldpiece);
+      allowablePieceMovement.forEach((movement) => {
+        if (movement == pieceCoordinate) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
     }
   }
 
   //Calculate knight movement
   calculatePossibleKnightMovement(piece) {
-    const possibleKnightMovements = [-21, -19, -12, -8, 8, 12, 19, 21];
+    let possibleKnightMovements = [-21, -19, -12, -8, 8, 12, 19, 21];
+    const updatedPossibleKnightMovement = [];
     const pieceCoordinate = piece.dataset.position * 1; // Update which position Pawncan move
-
-    if (
-      piece.dataset.piece === 'knight' &&
-      piece.dataset.unique === this.activePiece
-    ) {
+    if (piece.dataset.piece === 'knight') {
       // Upade possible knight movement
       possibleKnightMovements.forEach((movement) => {
-        possibleKnightMovements[possibleKnightMovements.indexOf(movement)] =
-          piece.dataset.position * 1 + movement;
+        if (
+          piece.dataset.position * 1 + movement > 10 &&
+          piece.dataset.position * 1 + movement < 89 &&
+          `${pieceCoordinate + movement}`[1] != 0 &&
+          `${pieceCoordinate + movement}`[1] != 9
+        ) {
+          updatedPossibleKnightMovement.push(
+            piece.dataset.position * 1 + movement
+          );
+        }
+      });
+
+      document.querySelectorAll('.piece').forEach((piece1) => {
+        const position = piece1.dataset.position * 1;
+        if (updatedPossibleKnightMovement.includes(position)) {
+          if (piece1.dataset.color === piece.dataset.color) {
+            updatedPossibleKnightMovement.splice(
+              updatedPossibleKnightMovement.indexOf(position),
+              1
+            );
+          }
+        }
       });
     }
-    const allowablePieceMovement = possibleKnightMovements;
-    return allowablePieceMovement;
+    return updatedPossibleKnightMovement;
   }
   // Knight movement
   knightMovement(piece, tile) {
@@ -698,10 +720,7 @@ style="grid-area:p85;z-index:10;">
     let possibleRookMovementsYnegative = [];
     let possibleRookMovementsXnegative = [];
     let pieceCoordinate = piece.dataset.position * 1;
-    if (
-      (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') &&
-      piece.dataset.unique === this.activePiece
-    ) {
+    if (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') {
       // Update Rook movement Y positive
       for (let i = 1; i < 9; i++) {
         if (piece.dataset.position - i * 10 > 10) {
@@ -853,10 +872,7 @@ style="grid-area:p85;z-index:10;">
     let possibleBishopMovementsYnegative = [];
     let possibleBishopMovementsXnegative = [];
     const pieceCoordinate = piece.dataset.position * 1;
-    if (
-      (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') &&
-      piece.dataset.unique === this.activePiece
-    ) {
+    if (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') {
       // Update Bishop movement Y positive
       let overboardMovementsYpositive = false;
       for (let i = 1; i < 9; i++) {
@@ -1052,7 +1068,6 @@ style="grid-area:p85;z-index:10;">
           this.activePiece = undefined;
         }
       });
-      allowablePieceMovement = [];
     }
   }
 
@@ -1124,7 +1139,6 @@ style="grid-area:p85;z-index:10;">
           this.activePiece = undefined;
         }
       });
-      allowablePieceMovement = [];
     }
   }
 
@@ -1146,6 +1160,11 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            if (piece.dataset.color === 'white') {
+              this.kingPosition[0] = tile.dataset.position;
+            } else {
+              this.kingPosition[1] = tile.dataset.position;
+            }
           }
         });
       }
@@ -1163,18 +1182,14 @@ style="grid-area:p85;z-index:10;">
     const possibleKingMovements = [-9, -10, -11, -1, 1, 9, 10, 11];
     const occupiedKingMovements = [];
     let i = 0;
-    const allowablePieceMovement = [];
     const pieceCoordinate = piece.dataset.position * 1;
-    if (
-      piece.dataset.piece === 'king' &&
-      piece.dataset.unique === this.activePiece
-    ) {
+    let allowablePieceMovement = [];
+    if (piece.dataset.piece === 'king') {
       // Update King movement
       possibleKingMovements.forEach((movement) => {
         possibleKingMovements[i] = movement + pieceCoordinate;
         i++;
       });
-
       // Check which position has been occupuied
       possibleKingMovements.forEach((movement) => {
         document.querySelectorAll('.piece').forEach((piece1) => {
@@ -1189,7 +1204,13 @@ style="grid-area:p85;z-index:10;">
 
       // Update which position king can move
       possibleKingMovements.forEach((movement) => {
-        if (!occupiedKingMovements.includes(movement)) {
+        if (
+          !occupiedKingMovements.includes(movement) &&
+          movement > 10 &&
+          movement < 89 &&
+          `${movement}`[1] != 0 &&
+          `${movement}`[1] != 9
+        ) {
           allowablePieceMovement.push(movement);
         }
       });
@@ -1213,10 +1234,31 @@ style="grid-area:p85;z-index:10;">
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.style.display = 'none';
           this.activePiece = undefined;
+          if (piece.dataset.color === 'white') {
+            this.kingPosition[0] = tile.dataset.position;
+          } else {
+            this.kingPosition[1] = tile.dataset.position;
+          }
         }
       });
-      allowablePieceMovement = [];
     }
+  }
+
+  calculateAllMovement(color) {
+    let allOpponetMovement = [];
+    document.querySelectorAll('.piece').forEach((piece) => {
+      if (piece.dataset.color === color) {
+        allOpponetMovement = [
+          ...allOpponetMovement,
+          ...this.calculatePossiblePawnCapture(piece),
+          ...this.calculatePossibleRookMovement(piece),
+          ...this.calculatePossibleKnightMovement(piece),
+          ...this.calculatePossibleBishopMovement(piece),
+          ...this.calculatePossibleKingMovement(piece),
+        ];
+      }
+    });
+    return allOpponetMovement;
   }
 }
 
