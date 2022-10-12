@@ -1,6 +1,9 @@
 class InternationalChess {
   // Select main html element
   main = document.querySelector('main');
+  outsideElement = [
+    11, 19, 20, 29, 30, 39, 40, 49, 50, 59, 60, 69, 70, 79, 80, 89,
+  ];
   kingPosition = {
     white: 15,
     black: 85,
@@ -574,7 +577,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
         }
       });
@@ -656,7 +659,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
         }
       });
@@ -692,142 +695,87 @@ style="grid-area:p85;z-index:10;">
 
   // Calculate all the movement a rook can go
   calculatePossibleRookMovement(piece) {
-    let possibleRookMovementsYpositive = [];
-    let possibleRookMovementsXpositive = [];
-    let possibleRookMovementsYnegative = [];
-    let possibleRookMovementsXnegative = [];
-    let pieceCoordinate = piece.dataset.position * 1;
-    if (piece.dataset.piece === 'rook' || piece.dataset.piece === 'queen') {
-      // Update Rook movement Y positive
+    const allMovement = [];
+    let pieces = [];
+    document.querySelectorAll('.piece').forEach((piece1) => {
+      pieces.push(piece1);
+    });
+    if (piece.dataset.piece == 'rook' || piece.dataset.piece == 'queen') {
+      pieces.sort((a, b) => b.dataset.position * 1 - a.dataset.position * 1);
+      let shouldYpositiveBreak = false;
       for (let i = 1; i < 9; i++) {
-        if (piece.dataset.position - i * 10 > 10) {
-          possibleRookMovementsYpositive.push(piece.dataset.position - i * 10);
-        }
-      }
-
-      possibleRookMovementsYpositive = possibleRookMovementsYpositive.reverse();
-      // Check which position has been occupuied
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleRookMovementsYpositive.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleRookMovementsYpositive.splice(
-              0,
-              possibleRookMovementsYpositive.indexOf(position)
-            );
-          } else {
-            possibleRookMovementsYpositive.splice(
-              0,
-              possibleRookMovementsYpositive.indexOf(position) - 1
-            );
+        if (piece.dataset.position * 1 - i * 10 < 11) break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 - i * 10 ==
+            pieces[j].dataset.position
+          ) {
+            shouldYpositiveBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 - i * 10);
+              break;
+            }
           }
         }
-      });
-
-      // Update Rook movement Y negative
-      for (let i = 1; i < 9; i++) {
-        if (piece.dataset.position * 1 + i * 10 < 89) {
-          possibleRookMovementsYnegative.push(
-            piece.dataset.position * 1 + i * 10
-          );
-        }
+        if (shouldYpositiveBreak) break;
+        allMovement.push(piece.dataset.position * 1 - i * 10);
       }
 
-      // Check which position has been occupuied
-      possibleRookMovementsYnegative = possibleRookMovementsYnegative.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleRookMovementsYnegative.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleRookMovementsYnegative.splice(
-              0,
-              possibleRookMovementsYnegative.indexOf(position)
-            );
-          } else {
-            possibleRookMovementsYnegative.splice(
-              0,
-              possibleRookMovementsYnegative.indexOf(position) - 1
-            );
-          }
-        }
-      });
-
-      // Update Rook movement X positive
-      let overboardMovementsXpositive = false;
+      let shouldXpositiveBreak = false;
       for (let i = 1; i < 9; i++) {
-        if (
-          `${piece.dataset.position * 1 + i}`[1] * 1 < 9 &&
-          !overboardMovementsXpositive
-        ) {
-          possibleRookMovementsXpositive.push(piece.dataset.position * 1 + i);
-        } else {
-          overboardMovementsXpositive = true;
-        }
-      }
-      // Check which position has been occupuied
-      possibleRookMovementsXpositive = possibleRookMovementsXpositive.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleRookMovementsXpositive.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleRookMovementsXpositive.splice(
-              0,
-              possibleRookMovementsXpositive.indexOf(position)
-            );
-          } else {
-            possibleRookMovementsXpositive.splice(
-              0,
-              possibleRookMovementsXpositive.indexOf(position) - 1
-            );
+        if (this.outsideElement.includes(piece.dataset.position * 1 + i)) break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (piece.dataset.position * 1 + i == pieces[j].dataset.position) {
+            shouldXpositiveBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 + i);
+              break;
+            }
           }
         }
-      });
-
-      // Update Rook movement X negative
-      let overboardMovementsXnegative = false;
+        if (shouldXpositiveBreak) break;
+        allMovement.push(piece.dataset.position * 1 + i);
+      }
+      pieces = pieces.reverse();
+      let shouldYnegativeBreak = false;
       for (let i = 1; i < 9; i++) {
-        if (
-          `${piece.dataset.position * 1 - i}`[1] * 1 > 0 &&
-          !overboardMovementsXnegative
-        ) {
-          possibleRookMovementsXnegative.push(piece.dataset.position * 1 - i);
-        } else {
-          overboardMovementsXnegative = true;
-        }
-      }
-
-      // Check which position has been occupuied
-      possibleRookMovementsXnegative = possibleRookMovementsXnegative.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleRookMovementsXnegative.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleRookMovementsXnegative.splice(
-              0,
-              possibleRookMovementsXnegative.indexOf(position)
-            );
-          } else {
-            possibleRookMovementsXnegative.splice(
-              0,
-              possibleRookMovementsXnegative.indexOf(position) - 1
-            );
+        if (piece.dataset.position * 1 + i * 10 > 88) break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 + i * 10 ==
+            pieces[j].dataset.position
+          ) {
+            shouldYnegativeBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 + i * 10);
+              break;
+            }
           }
         }
-      });
+        if (shouldYnegativeBreak) break;
+        allMovement.push(piece.dataset.position * 1 + i * 10);
+      }
+      let shouldXnegativeBreak = false;
+      for (let i = 1; i < 9; i++) {
+        if (this.outsideElement.includes(piece.dataset.position * 1 - i)) break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (piece.dataset.position * 1 - i == pieces[j].dataset.position) {
+            shouldXnegativeBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 - i);
+              break;
+            }
+          }
+        }
+        if (shouldXnegativeBreak) break;
+        allMovement.push(piece.dataset.position * 1 - i);
+      }
     }
-
-    // console.log([
-    //   ...possibleRookMovementsXnegative,
-    //   ...possibleRookMovementsXpositive,
-    //   ...possibleRookMovementsYnegative,
-    //   ...possibleRookMovementsYpositive,
-    // ]);
-    return [
-      ...possibleRookMovementsXnegative,
-      ...possibleRookMovementsXpositive,
-      ...possibleRookMovementsYnegative,
-      ...possibleRookMovementsYpositive,
-    ];
+    return allMovement;
   }
 
   // Rook capture
@@ -842,7 +790,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
         }
       });
@@ -851,158 +799,112 @@ style="grid-area:p85;z-index:10;">
 
   // Calculate all the movement a bishop can go
   calculatePossibleBishopMovement(piece) {
-    let possibleBishopMovementsYpositive = [];
-    let possibleBishopMovementsXpositive = [];
-    let possibleBishopMovementsYnegative = [];
-    let possibleBishopMovementsXnegative = [];
-    const pieceCoordinate = piece.dataset.position * 1;
-    if (piece.dataset.piece === 'bishop' || piece.dataset.piece === 'queen') {
-      // Update Bishop movement Y positive
-      let overboardMovementsYpositive = false;
+    const allMovement = [];
+    let pieces = [];
+    document.querySelectorAll('.piece').forEach((piece1) => {
+      pieces.push(piece1);
+    });
+    if (piece.dataset.piece == 'bishop' || piece.dataset.piece == 'queen') {
+      pieces.sort((a, b) => b.dataset.position * 1 - a.dataset.position * 1);
+      let shouldYpositiveBreak = false;
       for (let i = 1; i < 9; i++) {
         if (
-          `${piece.dataset.position * 1 - i * 11}`[1] * 1 > 0 &&
-          !overboardMovementsYpositive
-        ) {
-          possibleBishopMovementsYpositive.push(
-            piece.dataset.position * 1 - i * 11
-          );
-        } else {
-          overboardMovementsYpositive = true;
-        }
-      }
-      // Check which position has been occupuied
-      possibleBishopMovementsYpositive =
-        possibleBishopMovementsYpositive.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleBishopMovementsYpositive.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleBishopMovementsYpositive.splice(
-              0,
-              possibleBishopMovementsYpositive.indexOf(position)
-            );
-          } else {
-            possibleBishopMovementsYpositive.splice(
-              0,
-              possibleBishopMovementsYpositive.indexOf(position) - 1
-            );
+          piece.dataset.position * 1 - i * 11 < 11 ||
+          this.outsideElement.includes(piece.dataset.position * 1 - i * 11)
+        )
+          break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 - i * 11 ==
+            pieces[j].dataset.position
+          ) {
+            shouldYpositiveBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 - i * 11);
+              break;
+            }
           }
         }
-      });
+        if (shouldYpositiveBreak) break;
+        allMovement.push(piece.dataset.position * 1 - i * 11);
+      }
 
-      // Update Bishop movement X positive
-      let overboardMovementsXpositive = false;
+      let shouldXpositiveBreak = false;
       for (let i = 1; i < 9; i++) {
         if (
-          `${piece.dataset.position * 1 - i * 9}`[1] * 1 < 9 &&
-          !overboardMovementsXpositive
-        ) {
-          possibleBishopMovementsXpositive.push(
-            piece.dataset.position * 1 - i * 9
-          );
-        } else {
-          overboardMovementsXpositive = true;
-        }
-      }
-      // Check which position has been occupuied
-      possibleBishopMovementsXpositive =
-        possibleBishopMovementsXpositive.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleBishopMovementsXpositive.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleBishopMovementsXpositive.splice(
-              0,
-              possibleBishopMovementsXpositive.indexOf(position)
-            );
-          } else {
-            possibleBishopMovementsXpositive.splice(
-              0,
-              possibleBishopMovementsXpositive.indexOf(position) - 1
-            );
+          piece.dataset.position * 1 - i * 9 < 11 ||
+          this.outsideElement.includes(piece.dataset.position * 1 - i * 9)
+        )
+          break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 - i * 9 ==
+            pieces[j].dataset.position
+          ) {
+            shouldXpositiveBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 - i * 9);
+              break;
+            }
           }
         }
-      });
+        if (shouldXpositiveBreak) break;
+        allMovement.push(piece.dataset.position * 1 - i * 9);
+      }
 
-      // Update Bishop movement Y negative
-      let overboardMovementsYnegative = false;
+      pieces = pieces.reverse();
+
+      let shouldYnegativeBreak = false;
       for (let i = 1; i < 9; i++) {
         if (
-          `${piece.dataset.position * 1 + i * 11}`[1] * 1 < 9 &&
-          !overboardMovementsYnegative &&
-          piece.dataset.position * 1 + i * 11 < 89
-        ) {
-          possibleBishopMovementsYnegative.push(
-            piece.dataset.position * 1 + i * 11
-          );
-        } else {
-          overboardMovementsYnegative = true;
-        }
-      }
-
-      // Check which position has been occupuied
-      possibleBishopMovementsYnegative =
-        possibleBishopMovementsYnegative.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleBishopMovementsYnegative.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleBishopMovementsYnegative.splice(
-              0,
-              possibleBishopMovementsYnegative.indexOf(position)
-            );
-          } else {
-            possibleBishopMovementsYnegative.splice(
-              0,
-              possibleBishopMovementsYnegative.indexOf(position) - 1
-            );
+          piece.dataset.position * 1 + i * 11 > 88 ||
+          this.outsideElement.includes(piece.dataset.position * 1 + i * 11)
+        )
+          break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 + i * 11 ==
+            pieces[j].dataset.position
+          ) {
+            shouldYnegativeBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 + i * 11);
+              break;
+            }
           }
         }
-      });
+        if (shouldYnegativeBreak) break;
+        allMovement.push(piece.dataset.position * 1 + i * 11);
+      }
 
-      // Update Bishop movement Y negative
-      let overboardMovementsXnegative = false;
+      let shouldXnegativeBreak = false;
       for (let i = 1; i < 9; i++) {
         if (
-          `${piece.dataset.position * 1 + i * 9}`[1] * 1 > 0 &&
-          !overboardMovementsXnegative &&
-          piece.dataset.position * 1 + i * 9 < 89
-        ) {
-          possibleBishopMovementsXnegative.push(
-            piece.dataset.position * 1 + i * 9
-          );
-        } else {
-          overboardMovementsXnegative = true;
-        }
-      }
-      // Check which position has been occupuied
-      possibleBishopMovementsXnegative =
-        possibleBishopMovementsXnegative.reverse();
-      document.querySelectorAll('.piece').forEach((piece1) => {
-        const position = piece1.dataset.position * 1;
-        if (possibleBishopMovementsXnegative.includes(position)) {
-          if (piece1.dataset.color === piece.dataset.color) {
-            possibleBishopMovementsXnegative.splice(
-              0,
-              possibleBishopMovementsXnegative.indexOf(position)
-            );
-          } else {
-            possibleBishopMovementsXnegative.splice(
-              0,
-              possibleBishopMovementsXnegative.indexOf(position) - 1
-            );
+          piece.dataset.position * 1 + i * 9 > 88 ||
+          this.outsideElement.includes(piece.dataset.position * 1 + i * 9)
+        )
+          break;
+        for (let j = 0; j < pieces.length; j++) {
+          if (
+            piece.dataset.position * 1 + i * 9 ==
+            pieces[j].dataset.position
+          ) {
+            shouldXnegativeBreak = true;
+            if (pieces[j].dataset.color == piece.dataset.color) break;
+            if (pieces[j].dataset.color != piece.dataset.color) {
+              allMovement.push(piece.dataset.position * 1 + i * 9);
+              break;
+            }
           }
         }
-      });
+        if (shouldXnegativeBreak) break;
+        allMovement.push(piece.dataset.position * 1 + i * 9);
+      }
     }
-
-    return [
-      ...possibleBishopMovementsXnegative,
-      ...possibleBishopMovementsXpositive,
-      ...possibleBishopMovementsYnegative,
-      ...possibleBishopMovementsYpositive,
-    ];
+    return allMovement;
   }
 
   // Bishop movement
@@ -1045,7 +947,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
         }
       });
@@ -1096,7 +998,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
         }
       });
@@ -1186,7 +1088,7 @@ style="grid-area:p85;z-index:10;">
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
-          piece.style.display = 'none';
+          piece.remove();
           this.activePiece = undefined;
           this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
         }
@@ -1203,7 +1105,7 @@ style="grid-area:p85;z-index:10;">
           ...this.calculatePossiblePawnCapture(piece),
           ...this.calculatePossibleRookMovement(piece),
           ...this.calculatePossibleKnightMovement(piece),
-          ...this.calculatePossibleBishopMovement(piece),
+          // ...this.calculatePossibleBishopMovement(piece),
           ...this.calculatePossibleKingMovement(piece),
         ];
       }
@@ -1219,7 +1121,7 @@ style="grid-area:p85;z-index:10;">
           ...this.calculatePossiblePawnCapture(piece),
           ...this.calculatePossibleRookMovement(piece),
           ...this.calculatePossibleKnightMovement(piece),
-          ...this.calculatePossibleBishopMovement(piece),
+          // ...this.calculatePossibleBishopMovement(piece),
           ...this.calculatePossibleKingMovement(piece),
         ];
       }
@@ -1244,7 +1146,11 @@ style="grid-area:p85;z-index:10;">
         ) {
           const pieceOriginalPosition = piece.dataset.position;
           piece.dataset.position = tile.dataset.position;
+          console.log(piece.dataset.position);
           const newMovement = this.calculateAllMovement(opponentColor);
+          console.log(allOpponetMovement);
+          console.log(newMovement);
+
           if (!newMovement.includes(this.kingPosition[piece.dataset.color])) {
             piece.dataset.position = pieceOriginalPosition;
           } else {
@@ -1261,6 +1167,22 @@ style="grid-area:p85;z-index:10;">
       this.bishopMovement(piece, tile);
       this.queenMovement(piece, tile);
       this.kingMovement(piece, tile);
+
+      // const opponentColor = piece.dataset.color === 'black' ? 'white' : 'black';
+      // const allMyMovement = this.calculateAllMovement(piece.dataset.color);
+      // if (allMyMovement.includes(this.kingPosition[opponentColor])) {
+      //   document.querySelectorAll('.piece').forEach((piece2) => {
+      //     if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+      //       piece2.classList.add('check');
+      //     }
+      //   });
+      // } else {
+      //   document.querySelectorAll('.piece').forEach((piece2) => {
+      //     if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+      //       piece2.classList.remove('check');
+      //     }
+      //   });
+      // }
     });
   }
   checkIfPieceOnCheckmateCapture(piece) {
@@ -1299,38 +1221,41 @@ style="grid-area:p85;z-index:10;">
         this.rookCapture(oldpiece, piece);
         this.queenCapture(oldpiece, piece);
         this.kingCapture(oldpiece, piece);
-      }
-      /*      if (
-        oldpiece.dataset.unique === this.activepiece &&
-        oldpiece.dataset.color !== piece.dataset.color
-      ) {
-        console.log(1);
-        const opponentColor =
-          oldpiece.dataset.color === 'black' ? 'white' : 'black';
-        const allOpponetMovement = this.calculateAllMovement(opponentColor);
-        if (
-          allOpponetMovement.includes(this.kingPosition[oldpiece.dataset.color])
-        ) {
-          const oldpieceOriginalPosition = oldpiece.dataset.position;
-          oldpiece.dataset.position = piece.dataset.position;
-          const newMovement = this.calculateAllMovement(opponentColor);
-          if (
-            !newMovement.includes(this.kingPosition[oldpiece.dataset.color])
-          ) {
-            oldpiece.dataset.position = oldpieceOriginalPosition;
-          } else {
-            oldpiece.dataset.position = oldpieceOriginalPosition;
-            this.wrongInput(oldpiece);
-            return;
-          }
+
+        const allMyMovement = this.calculateAllMovement(oldpiece.dataset.color);
+        if (allMyMovement.includes(this.kingPosition[opponentColor])) {
+          document.querySelectorAll('.piece').forEach((piece2) => {
+            if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+              piece2.classList.add('check');
+            }
+          });
+        } else {
+          document.querySelectorAll('.piece').forEach((piece2) => {
+            if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+              piece2.classList.remove('check');
+            }
+          });
         }
-        this.pawnCapture(oldpiece, piece);
-        this.knightCapture(oldpiece, piece);
-        this.rookCapture(oldpiece, piece);
-        this.queenCapture(oldpiece, piece);
-        this.kingCapture(oldpiece, piece);
-      } */
+      }
     });
+  }
+
+  removePiece(arr, num) {
+    const allowed = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] == num) break;
+      allowed.push(arr[i]);
+    }
+    return allowed;
+  }
+
+  removeOpponentPiece(arr, num) {
+    const allowed = [];
+    for (let i = 0; i < arr.length; i++) {
+      allowed.push(arr[i]);
+      if (arr[i] == num) break;
+    }
+    return allowed;
   }
 }
 

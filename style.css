@@ -63,4 +63,7 @@ main .piece {
   100% {
     transform: rotateZ(0deg);
   }
+}
+.check {
+  background-color: red;
 }/*# sourceMappingURL=style.css.map */
