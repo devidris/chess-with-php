@@ -1146,10 +1146,7 @@ style="grid-area:p85;z-index:10;">
         ) {
           const pieceOriginalPosition = piece.dataset.position;
           piece.dataset.position = tile.dataset.position;
-          console.log(piece.dataset.position);
           const newMovement = this.calculateAllMovement(opponentColor);
-          console.log(allOpponetMovement);
-          console.log(newMovement);
 
           if (!newMovement.includes(this.kingPosition[piece.dataset.color])) {
             piece.dataset.position = pieceOriginalPosition;
@@ -1168,21 +1165,21 @@ style="grid-area:p85;z-index:10;">
       this.queenMovement(piece, tile);
       this.kingMovement(piece, tile);
 
-      // const opponentColor = piece.dataset.color === 'black' ? 'white' : 'black';
-      // const allMyMovement = this.calculateAllMovement(piece.dataset.color);
-      // if (allMyMovement.includes(this.kingPosition[opponentColor])) {
-      //   document.querySelectorAll('.piece').forEach((piece2) => {
-      //     if (piece2.dataset.position == this.kingPosition[opponentColor]) {
-      //       piece2.classList.add('check');
-      //     }
-      //   });
-      // } else {
-      //   document.querySelectorAll('.piece').forEach((piece2) => {
-      //     if (piece2.dataset.position == this.kingPosition[opponentColor]) {
-      //       piece2.classList.remove('check');
-      //     }
-      //   });
-      // }
+      const opponentColor = piece.dataset.color === 'black' ? 'white' : 'black';
+      const allMyMovement = this.calculateAllMovement(piece.dataset.color);
+      if (allMyMovement.includes(this.kingPosition[opponentColor])) {
+        document.querySelectorAll('.piece').forEach((piece2) => {
+          if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+            piece2.classList.add('check');
+          }
+        });
+      } else {
+        document.querySelectorAll('.piece').forEach((piece2) => {
+          if (piece2.dataset.position == this.kingPosition[opponentColor]) {
+            piece2.classList.remove('check');
+          }
+        });
+      }
     });
   }
   checkIfPieceOnCheckmateCapture(piece) {
