@@ -571,14 +571,14 @@ style="grid-area:p85;z-index:10;">
   // Pawn capture
   pawnCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'pawn') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
       const allowablePieceMovement =
         this.calculatePossiblePawnCapture(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
-          // wrongInput = false;
+          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -586,9 +586,11 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
-      // if (wrongInput) {
-      //   this.wrongInput(piece);
-      // }
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
   }
 
@@ -658,7 +660,7 @@ style="grid-area:p85;z-index:10;">
   // Knight capture
   knightCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'knight') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -666,7 +668,7 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleKnightMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
-          // wrongInput = false;
+          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -674,10 +676,12 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
-    // if (wrongInput) {
-    //   this.wrongInput(piece);
-    // }
   }
 
   // Rook movement
@@ -798,14 +802,14 @@ style="grid-area:p85;z-index:10;">
   // Rook capture
   rookCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'rook') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
       const allowablePieceMovement =
         this.calculatePossibleRookMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
-        // wrongInput = false;
+        wrongInput = false;
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
@@ -814,10 +818,12 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
-    // if (wrongInput) {
-    //   this.wrongInput(piece);
-    // }
   }
 
   // Calculate all the movement a bishop can go
@@ -964,7 +970,7 @@ style="grid-area:p85;z-index:10;">
   // Bishop Capture
   bishopCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'bishop') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -972,7 +978,7 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
-          // wrongInput = false;
+          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -980,10 +986,13 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
-    // if (wrongInput) {
-    //   this.wrongInput(piece);
-    // }
   }
 
   // Queen movement
@@ -1021,7 +1030,7 @@ style="grid-area:p85;z-index:10;">
   // Queen Capture
   queenCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'queen') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -1032,7 +1041,7 @@ style="grid-area:p85;z-index:10;">
 
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
-          // wrongInput = false;
+          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -1040,10 +1049,12 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
-    // if (wrongInput) {
-    //   this.wrongInput(piece);
-    // }
   }
 
   // King Movement
@@ -1123,7 +1134,7 @@ style="grid-area:p85;z-index:10;">
   // TODO: stalemake
   kingCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'king') {
-      // let wrongInput = true;
+      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -1131,7 +1142,7 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
-          // wrongInput = false;
+          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -1140,10 +1151,12 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+      if (oldpiece.dataset.color === this.move) {
+        if (wrongInput) {
+          this.wrongInput(oldpiece);
+        }
+      }
     }
-    // if (wrongInput) {
-    //   this.wrongInput(piece);
-    // }
   }
 
   calculateSpecificMovement(color) {
