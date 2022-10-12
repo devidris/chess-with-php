@@ -9,6 +9,7 @@ class InternationalChess {
     black: 85,
   };
 
+  move = 'white';
   activePiece = undefined;
 
   constructor() {
@@ -20,19 +21,16 @@ class InternationalChess {
         // Check for capture
         if (this.activePiece) {
           this.checkIfPieceOnCheckmateCapture(piece);
-          // document.querySelectorAll('.piece').forEach((oldpiece) => {
-          //   if (
-          //     oldpiece.dataset.unique === this.activePiece &&
-          //     oldpiece.dataset.color !== piece.dataset.color
-          //   ) {
+        }
+        this.activePiece = piece.dataset.unique;
 
-          //     this.pawnCapture(oldpiece, piece);
-          //     this.knightCapture(oldpiece, piece);
-          //     this.rookCapture(oldpiece, piece);
-          //     this.queenCapture(oldpiece, piece);
-          //     this.kingCapture(oldpiece, piece);
-          //   }
-          // });
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+        // Check for capture
+        if (this.activePiece) {
+          this.checkIfPieceOnCheckmateCapture(piece);
         }
         this.activePiece = piece.dataset.unique;
 
@@ -41,8 +39,10 @@ class InternationalChess {
           piece.style.backgroundColor = '';
         });
 
-        // Add background color to active piece
-        piece.style.backgroundColor = 'green';
+        if (piece.dataset.color === this.move) {
+          // Add background color to active piece
+          piece.style.backgroundColor = 'green';
+        }
       });
     });
 
@@ -536,6 +536,9 @@ style="grid-area:p85;z-index:10;">
             if (piece.dataset.firstmove === 'true') {
               piece.dataset.firstmove = false;
             }
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -568,19 +571,24 @@ style="grid-area:p85;z-index:10;">
   // Pawn capture
   pawnCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'pawn') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
-
       const allowablePieceMovement =
         this.calculatePossiblePawnCapture(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
+          // wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
+      // if (wrongInput) {
+      //   this.wrongInput(piece);
+      // }
     }
   }
 
@@ -636,9 +644,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            if (piece.dataset.firstmove === 'true') {
-              piece.dataset.firstmove = false;
-            }
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -650,6 +658,7 @@ style="grid-area:p85;z-index:10;">
   // Knight capture
   knightCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'knight') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -657,13 +666,18 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleKnightMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
+          // wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
     }
+    // if (wrongInput) {
+    //   this.wrongInput(piece);
+    // }
   }
 
   // Rook movement
@@ -684,6 +698,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -781,20 +798,26 @@ style="grid-area:p85;z-index:10;">
   // Rook capture
   rookCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'rook') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
       const allowablePieceMovement =
         this.calculatePossibleRookMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
+        // wrongInput = false;
         if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
     }
+    // if (wrongInput) {
+    //   this.wrongInput(piece);
+    // }
   }
 
   // Calculate all the movement a bishop can go
@@ -926,6 +949,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -938,6 +964,7 @@ style="grid-area:p85;z-index:10;">
   // Bishop Capture
   bishopCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'bishop') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -945,13 +972,18 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
+          // wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
     }
+    // if (wrongInput) {
+    //   this.wrongInput(piece);
+    // }
   }
 
   // Queen movement
@@ -975,6 +1007,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -986,6 +1021,7 @@ style="grid-area:p85;z-index:10;">
   // Queen Capture
   queenCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'queen') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -996,13 +1032,18 @@ style="grid-area:p85;z-index:10;">
 
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
+          // wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
     }
+    // if (wrongInput) {
+    //   this.wrongInput(piece);
+    // }
   }
 
   // King Movement
@@ -1024,6 +1065,9 @@ style="grid-area:p85;z-index:10;">
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
             this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -1079,6 +1123,7 @@ style="grid-area:p85;z-index:10;">
   // TODO: stalemake
   kingCapture(oldpiece, piece) {
     if (oldpiece.dataset.piece === 'king') {
+      // let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
@@ -1086,14 +1131,19 @@ style="grid-area:p85;z-index:10;">
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
         if (movement == pieceCoordinate) {
+          // wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
           this.activePiece = undefined;
           this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
     }
+    // if (wrongInput) {
+    //   this.wrongInput(piece);
+    // }
   }
 
   calculateSpecificMovement(color) {
@@ -1157,13 +1207,14 @@ style="grid-area:p85;z-index:10;">
           }
         }
       }
-
-      this.pawnMovement(piece, tile);
-      this.knightMovement(piece, tile);
-      this.rookMovement(piece, tile);
-      this.bishopMovement(piece, tile);
-      this.queenMovement(piece, tile);
-      this.kingMovement(piece, tile);
+      if (piece.dataset.color === this.move) {
+        this.pawnMovement(piece, tile);
+        this.knightMovement(piece, tile);
+        this.rookMovement(piece, tile);
+        this.bishopMovement(piece, tile);
+        this.queenMovement(piece, tile);
+        this.kingMovement(piece, tile);
+      }
 
       const opponentColor = piece.dataset.color === 'black' ? 'white' : 'black';
       const allMyMovement = this.calculateAllMovement(piece.dataset.color);
@@ -1213,6 +1264,7 @@ style="grid-area:p85;z-index:10;">
             return;
           }
         }
+
         this.pawnCapture(oldpiece, piece);
         this.knightCapture(oldpiece, piece);
         this.rookCapture(oldpiece, piece);
