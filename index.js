@@ -1,7 +1,10 @@
 class InternationalChess {
   // Select main html element
   main = document.querySelector('main');
-  kingPosition = [15, 85];
+  kingPosition = {
+    white: 15,
+    black: 85,
+  };
 
   activePiece = undefined;
 
@@ -13,18 +16,20 @@ class InternationalChess {
       piece.addEventListener('click', (e) => {
         // Check for capture
         if (this.activePiece) {
-          document.querySelectorAll('.piece').forEach((oldpiece) => {
-            if (
-              oldpiece.dataset.unique === this.activePiece &&
-              oldpiece.dataset.color !== piece.dataset.color
-            ) {
-              this.pawnCapture(oldpiece, piece);
-              this.knightCapture(oldpiece, piece);
-              this.rookCapture(oldpiece, piece);
-              this.queenCapture(oldpiece, piece);
-              this.kingCapture(oldpiece, piece);
-            }
-          });
+          this.checkIfPieceOnCheckmateCapture(piece);
+          // document.querySelectorAll('.piece').forEach((oldpiece) => {
+          //   if (
+          //     oldpiece.dataset.unique === this.activePiece &&
+          //     oldpiece.dataset.color !== piece.dataset.color
+          //   ) {
+
+          //     this.pawnCapture(oldpiece, piece);
+          //     this.knightCapture(oldpiece, piece);
+          //     this.rookCapture(oldpiece, piece);
+          //     this.queenCapture(oldpiece, piece);
+          //     this.kingCapture(oldpiece, piece);
+          //   }
+          // });
         }
         this.activePiece = piece.dataset.unique;
 
@@ -41,21 +46,7 @@ class InternationalChess {
     // Adding eventlisteners to chess tiles for piece movement
     document.querySelectorAll('.background').forEach((tile) => {
       tile.addEventListener('click', (e) => {
-        document.querySelectorAll('.piece').forEach((piece) => {
-          if (piece.dataset.unique === this.activePiece) {
-            const opponentColor =
-              piece.dataset.color === 'black' ? 'white' : 'black';
-            const allOpponetMovement = this.calculateAllMovement(opponentColor);
-            // console.log(allOpponetMovement);
-          }
-
-          this.pawnMovement(piece, tile);
-          this.knightMovement(piece, tile);
-          this.rookMovement(piece, tile);
-          this.bishopMovement(piece, tile);
-          this.queenMovement(piece, tile);
-          this.kingMovement(piece, tile);
-        });
+        this.checkIfPieceOnCheckmateMovement(tile);
       });
     });
   }
@@ -546,10 +537,7 @@ style="grid-area:p85;z-index:10;">
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -652,10 +640,7 @@ style="grid-area:p85;z-index:10;">
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -665,21 +650,16 @@ style="grid-area:p85;z-index:10;">
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
 
-      if (
-        pieceCoordinate == oldpieceCoordinate + 21 ||
-        pieceCoordinate == oldpieceCoordinate + 19 ||
-        pieceCoordinate == oldpieceCoordinate - 21 ||
-        pieceCoordinate == oldpieceCoordinate - 19 ||
-        pieceCoordinate == oldpieceCoordinate - 12 ||
-        pieceCoordinate == oldpieceCoordinate - 8 ||
-        pieceCoordinate == oldpieceCoordinate + 12 ||
-        pieceCoordinate == oldpieceCoordinate + 8
-      ) {
-        oldpiece.dataset.position = piece.dataset.position;
-        oldpiece.style.gridArea = 'p' + piece.dataset.position;
-        piece.style.display = 'none';
-        this.activePiece = undefined;
-      }
+      const allowablePieceMovement =
+        this.calculatePossibleKnightMovement(oldpiece);
+      allowablePieceMovement.forEach((movement) => {
+        if (movement == pieceCoordinate) {
+          oldpiece.dataset.position = piece.dataset.position;
+          oldpiece.style.gridArea = 'p' + piece.dataset.position;
+          piece.style.display = 'none';
+          this.activePiece = undefined;
+        }
+      });
     }
   }
 
@@ -705,10 +685,7 @@ style="grid-area:p85;z-index:10;">
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -727,6 +704,7 @@ style="grid-area:p85;z-index:10;">
           possibleRookMovementsYpositive.push(piece.dataset.position - i * 10);
         }
       }
+
       possibleRookMovementsYpositive = possibleRookMovementsYpositive.reverse();
       // Check which position has been occupuied
       document.querySelectorAll('.piece').forEach((piece1) => {
@@ -735,12 +713,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsYpositive.splice(
               0,
-              possibleRookMovementsYpositive.indexOf(position) + 1
+              possibleRookMovementsYpositive.indexOf(position)
             );
           } else {
             possibleRookMovementsYpositive.splice(
               0,
-              possibleRookMovementsYpositive.indexOf(position)
+              possibleRookMovementsYpositive.indexOf(position) - 1
             );
           }
         }
@@ -763,12 +741,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsYnegative.splice(
               0,
-              possibleRookMovementsYnegative.indexOf(position) + 1
+              possibleRookMovementsYnegative.indexOf(position)
             );
           } else {
             possibleRookMovementsYnegative.splice(
               0,
-              possibleRookMovementsYnegative.indexOf(position)
+              possibleRookMovementsYnegative.indexOf(position) - 1
             );
           }
         }
@@ -794,12 +772,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsXpositive.splice(
               0,
-              possibleRookMovementsXpositive.indexOf(position) + 1
+              possibleRookMovementsXpositive.indexOf(position)
             );
           } else {
             possibleRookMovementsXpositive.splice(
               0,
-              possibleRookMovementsXpositive.indexOf(position)
+              possibleRookMovementsXpositive.indexOf(position) - 1
             );
           }
         }
@@ -826,18 +804,24 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleRookMovementsXnegative.splice(
               0,
-              possibleRookMovementsXnegative.indexOf(position) + 1
+              possibleRookMovementsXnegative.indexOf(position)
             );
           } else {
             possibleRookMovementsXnegative.splice(
               0,
-              possibleRookMovementsXnegative.indexOf(position)
+              possibleRookMovementsXnegative.indexOf(position) - 1
             );
           }
         }
       });
     }
 
+    // console.log([
+    //   ...possibleRookMovementsXnegative,
+    //   ...possibleRookMovementsXpositive,
+    //   ...possibleRookMovementsYnegative,
+    //   ...possibleRookMovementsYpositive,
+    // ]);
     return [
       ...possibleRookMovementsXnegative,
       ...possibleRookMovementsXpositive,
@@ -896,12 +880,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleBishopMovementsYpositive.splice(
               0,
-              possibleBishopMovementsYpositive.indexOf(position) + 1
+              possibleBishopMovementsYpositive.indexOf(position)
             );
           } else {
             possibleBishopMovementsYpositive.splice(
               0,
-              possibleBishopMovementsYpositive.indexOf(position)
+              possibleBishopMovementsYpositive.indexOf(position) - 1
             );
           }
         }
@@ -930,12 +914,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleBishopMovementsXpositive.splice(
               0,
-              possibleBishopMovementsXpositive.indexOf(position) + 1
+              possibleBishopMovementsXpositive.indexOf(position)
             );
           } else {
             possibleBishopMovementsXpositive.splice(
               0,
-              possibleBishopMovementsXpositive.indexOf(position)
+              possibleBishopMovementsXpositive.indexOf(position) - 1
             );
           }
         }
@@ -966,12 +950,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleBishopMovementsYnegative.splice(
               0,
-              possibleBishopMovementsYnegative.indexOf(position) + 1
+              possibleBishopMovementsYnegative.indexOf(position)
             );
           } else {
             possibleBishopMovementsYnegative.splice(
               0,
-              possibleBishopMovementsYnegative.indexOf(position)
+              possibleBishopMovementsYnegative.indexOf(position) - 1
             );
           }
         }
@@ -1001,12 +985,12 @@ style="grid-area:p85;z-index:10;">
           if (piece1.dataset.color === piece.dataset.color) {
             possibleBishopMovementsXnegative.splice(
               0,
-              possibleBishopMovementsXnegative.indexOf(position) + 1
+              possibleBishopMovementsXnegative.indexOf(position)
             );
           } else {
             possibleBishopMovementsXnegative.splice(
               0,
-              possibleBishopMovementsXnegative.indexOf(position)
+              possibleBishopMovementsXnegative.indexOf(position) - 1
             );
           }
         }
@@ -1044,10 +1028,7 @@ style="grid-area:p85;z-index:10;">
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -1096,10 +1077,7 @@ style="grid-area:p85;z-index:10;">
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -1115,24 +1093,7 @@ style="grid-area:p85;z-index:10;">
       ];
 
       allowablePieceMovement.forEach((movement) => {
-        if (
-          movement + 10 == pieceCoordinate ||
-          movement - 10 == pieceCoordinate ||
-          movement - 1 == pieceCoordinate ||
-          movement + 1 == pieceCoordinate ||
-          oldpieceCoordinate + 10 == pieceCoordinate ||
-          oldpieceCoordinate - 10 == pieceCoordinate ||
-          oldpieceCoordinate + 1 == pieceCoordinate ||
-          oldpieceCoordinate - 1 == pieceCoordinate ||
-          movement + 11 == pieceCoordinate ||
-          movement - 9 == pieceCoordinate ||
-          movement - 11 == pieceCoordinate ||
-          movement + 9 == pieceCoordinate ||
-          oldpieceCoordinate + 11 == pieceCoordinate ||
-          oldpieceCoordinate - 11 == pieceCoordinate ||
-          oldpieceCoordinate + 9 == pieceCoordinate ||
-          oldpieceCoordinate - 9 == pieceCoordinate
-        ) {
+        if (movement == pieceCoordinate) {
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.style.display = 'none';
@@ -1160,19 +1121,12 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            if (piece.dataset.color === 'white') {
-              this.kingPosition[0] = tile.dataset.position;
-            } else {
-              this.kingPosition[1] = tile.dataset.position;
-            }
+            this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
           }
         });
       }
       if (wrongInput) {
-        piece.classList.add('wrong-input');
-        setTimeout(() => {
-          piece.classList.remove('wrong-input');
-        }, 600);
+        this.wrongInput(piece);
       }
     }
   }
@@ -1234,16 +1188,28 @@ style="grid-area:p85;z-index:10;">
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.style.display = 'none';
           this.activePiece = undefined;
-          if (piece.dataset.color === 'white') {
-            this.kingPosition[0] = tile.dataset.position;
-          } else {
-            this.kingPosition[1] = tile.dataset.position;
-          }
+          this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
         }
       });
     }
   }
 
+  calculateSpecificMovement(color) {
+    let allOpponetMovement = [];
+    document.querySelectorAll('.piece').forEach((piece) => {
+      if (piece.dataset.color !== data.dataset.color) {
+        allOpponetMovement = [
+          ...allOpponetMovement,
+          ...this.calculatePossiblePawnCapture(piece),
+          ...this.calculatePossibleRookMovement(piece),
+          ...this.calculatePossibleKnightMovement(piece),
+          ...this.calculatePossibleBishopMovement(piece),
+          ...this.calculatePossibleKingMovement(piece),
+        ];
+      }
+    });
+    return allOpponetMovement;
+  }
   calculateAllMovement(color) {
     let allOpponetMovement = [];
     document.querySelectorAll('.piece').forEach((piece) => {
@@ -1260,6 +1226,115 @@ style="grid-area:p85;z-index:10;">
     });
     return allOpponetMovement;
   }
+  wrongInput(piece) {
+    piece.classList.add('wrong-input');
+    setTimeout(() => {
+      piece.classList.remove('wrong-input');
+    }, 600);
+  }
+  checkIfPieceOnCheckmateMovement(tile) {
+    // Check if piece king is on check
+    document.querySelectorAll('.piece').forEach((piece) => {
+      if (piece.dataset.unique === this.activePiece) {
+        const opponentColor =
+          piece.dataset.color === 'black' ? 'white' : 'black';
+        const allOpponetMovement = this.calculateAllMovement(opponentColor);
+        if (
+          allOpponetMovement.includes(this.kingPosition[piece.dataset.color])
+        ) {
+          const pieceOriginalPosition = piece.dataset.position;
+          piece.dataset.position = tile.dataset.position;
+          const newMovement = this.calculateAllMovement(opponentColor);
+          if (!newMovement.includes(this.kingPosition[piece.dataset.color])) {
+            piece.dataset.position = pieceOriginalPosition;
+          } else {
+            piece.dataset.position = pieceOriginalPosition;
+            this.wrongInput(piece);
+            return;
+          }
+        }
+      }
+
+      this.pawnMovement(piece, tile);
+      this.knightMovement(piece, tile);
+      this.rookMovement(piece, tile);
+      this.bishopMovement(piece, tile);
+      this.queenMovement(piece, tile);
+      this.kingMovement(piece, tile);
+    });
+  }
+  checkIfPieceOnCheckmateCapture(piece) {
+    // Check if piece king is on check
+    document.querySelectorAll('.piece').forEach((oldpiece) => {
+      if (
+        oldpiece.dataset.unique === this.activePiece &&
+        oldpiece.dataset.color !== piece.dataset.color
+      ) {
+        const opponentColor =
+          oldpiece.dataset.color === 'black' ? 'white' : 'black';
+        const allOpponetMovement = this.calculateAllMovement(opponentColor);
+        if (
+          allOpponetMovement.includes(this.kingPosition[oldpiece.dataset.color])
+        ) {
+          const oldpieceOriginalPosition = oldpiece.dataset.position;
+          oldpiece.dataset.position = piece.dataset.position;
+          const newpieceOriginalPosition = piece.dataset.position;
+          piece.dataset.position = 'nothing';
+
+          const newMovement = this.calculateAllMovement(opponentColor);
+          if (
+            !newMovement.includes(this.kingPosition[oldpiece.dataset.color])
+          ) {
+            oldpiece.dataset.position = oldpieceOriginalPosition;
+            piece.dataset.position = newpieceOriginalPosition;
+          } else {
+            oldpiece.dataset.position = oldpieceOriginalPosition;
+            piece.dataset.position = newpieceOriginalPosition;
+            this.wrongInput(oldpiece);
+            return;
+          }
+        }
+        this.pawnCapture(oldpiece, piece);
+        this.knightCapture(oldpiece, piece);
+        this.rookCapture(oldpiece, piece);
+        this.queenCapture(oldpiece, piece);
+        this.kingCapture(oldpiece, piece);
+      }
+      /*      if (
+        oldpiece.dataset.unique === this.activepiece &&
+        oldpiece.dataset.color !== piece.dataset.color
+      ) {
+        console.log(1);
+        const opponentColor =
+          oldpiece.dataset.color === 'black' ? 'white' : 'black';
+        const allOpponetMovement = this.calculateAllMovement(opponentColor);
+        if (
+          allOpponetMovement.includes(this.kingPosition[oldpiece.dataset.color])
+        ) {
+          const oldpieceOriginalPosition = oldpiece.dataset.position;
+          oldpiece.dataset.position = piece.dataset.position;
+          const newMovement = this.calculateAllMovement(opponentColor);
+          if (
+            !newMovement.includes(this.kingPosition[oldpiece.dataset.color])
+          ) {
+            oldpiece.dataset.position = oldpieceOriginalPosition;
+          } else {
+            oldpiece.dataset.position = oldpieceOriginalPosition;
+            this.wrongInput(oldpiece);
+            return;
+          }
+        }
+        this.pawnCapture(oldpiece, piece);
+        this.knightCapture(oldpiece, piece);
+        this.rookCapture(oldpiece, piece);
+        this.queenCapture(oldpiece, piece);
+        this.kingCapture(oldpiece, piece);
+      } */
+    });
+  }
 }
 
 const chess = new InternationalChess();
+
+//TODO; Add shake to wrong capture
+//TODO: Vibrate device on wrong input
