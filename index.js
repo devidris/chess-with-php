@@ -933,6 +933,7 @@ style="grid-area:p85;z-index:10;">
         allMovement.push(piece.dataset.position * 1 + i * 9);
       }
     }
+
     return allMovement;
   }
 
@@ -977,8 +978,8 @@ style="grid-area:p85;z-index:10;">
       const allowablePieceMovement =
         this.calculatePossibleBishopMovement(oldpiece);
       allowablePieceMovement.forEach((movement) => {
+        wrongInput = false;
         if (movement == pieceCoordinate) {
-          wrongInput = false;
           oldpiece.dataset.position = piece.dataset.position;
           oldpiece.style.gridArea = 'p' + piece.dataset.position;
           piece.remove();
@@ -986,7 +987,6 @@ style="grid-area:p85;z-index:10;">
           this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
       });
-
       if (oldpiece.dataset.color === this.move) {
         if (wrongInput) {
           this.wrongInput(oldpiece);
@@ -1277,13 +1277,14 @@ style="grid-area:p85;z-index:10;">
             return;
           }
         }
-
-        this.pawnCapture(oldpiece, piece);
-        this.knightCapture(oldpiece, piece);
-        this.rookCapture(oldpiece, piece);
-        this.queenCapture(oldpiece, piece);
-        this.kingCapture(oldpiece, piece);
-
+        if (piece.dataset.color != this.move) {
+          this.pawnCapture(oldpiece, piece);
+          this.knightCapture(oldpiece, piece);
+          this.rookCapture(oldpiece, piece);
+          this.bishopCapture(oldpiece, piece);
+          this.queenCapture(oldpiece, piece);
+          this.kingCapture(oldpiece, piece);
+        }
         const allMyMovement = this.calculateAllMovement(oldpiece.dataset.color);
         if (allMyMovement.includes(this.kingPosition[opponentColor])) {
           document.querySelectorAll('.piece').forEach((piece2) => {
@@ -1323,5 +1324,6 @@ style="grid-area:p85;z-index:10;">
 
 const chess = new InternationalChess();
 
+// Bishop not capturing
 //TODO; Add shake to wrong capture
 //TODO: Vibrate device on wrong input
