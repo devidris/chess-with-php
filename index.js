@@ -18,28 +18,28 @@ class InternationalChess {
     // Adding eventlisteners to all chess pieces and also check for capture
     document.querySelectorAll('.piece').forEach((piece) => {
       piece.addEventListener('click', (e) => {
-        // Check for capture
-        if (this.activePiece) {
-          this.checkIfPieceOnCheckmateCapture(piece);
-        }
-        this.activePiece = piece.dataset.unique;
-
-        // Remove any piece that has background color
-        document.querySelectorAll('.piece').forEach((piece) => {
-          piece.style.backgroundColor = '';
-        });
-        // Check for capture
-        if (this.activePiece) {
-          this.checkIfPieceOnCheckmateCapture(piece);
-        }
-        this.activePiece = piece.dataset.unique;
-
-        // Remove any piece that has background color
-        document.querySelectorAll('.piece').forEach((piece) => {
-          piece.style.backgroundColor = '';
-        });
-
         if (piece.dataset.color === this.move) {
+          // Check for capture
+          if (this.activePiece) {
+            this.checkIfPieceOnCheckmateCapture(piece);
+          }
+          this.activePiece = piece.dataset.unique;
+
+          // Remove any piece that has background color
+          document.querySelectorAll('.piece').forEach((piece) => {
+            piece.style.backgroundColor = '';
+          });
+          // Check for capture
+          if (this.activePiece) {
+            this.checkIfPieceOnCheckmateCapture(piece);
+          }
+          this.activePiece = piece.dataset.unique;
+
+          // Remove any piece that has background color
+          document.querySelectorAll('.piece').forEach((piece) => {
+            piece.style.backgroundColor = '';
+          });
+
           // Add background color to active piece
           piece.style.backgroundColor = 'green';
         }
@@ -536,9 +536,6 @@ style="grid-area:p85;z-index:10;">
             if (piece.dataset.firstmove === 'true') {
               piece.dataset.firstmove = false;
             }
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -647,9 +644,6 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -704,9 +698,6 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -959,9 +950,6 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -1020,9 +1008,6 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -1081,9 +1066,6 @@ style="grid-area:p85;z-index:10;">
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
             this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
           }
         });
       }
@@ -1252,6 +1234,7 @@ style="grid-area:p85;z-index:10;">
           this.bishopMovement(piece, tile);
           this.queenMovement(piece, tile);
           this.kingMovement(piece, tile);
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
 
         const allMyMovement = this.calculateAllMovement(piece.dataset.color);
@@ -1319,6 +1302,7 @@ style="grid-area:p85;z-index:10;">
           this.bishopCapture(oldpiece, piece);
           this.queenCapture(oldpiece, piece);
           this.kingCapture(oldpiece, piece);
+          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
         const allMyMovement = this.calculateAllMovement(oldpiece.dataset.color);
         if (allMyMovement.includes(this.kingPosition[opponentColor])) {
