@@ -11,6 +11,7 @@ class InternationalChess {
 
   move = 'white';
   activePiece = undefined;
+  pawnTransition = undefined;
 
   constructor() {
     this.setTiles();
@@ -18,29 +19,30 @@ class InternationalChess {
     // Adding eventlisteners to all chess pieces and also check for capture
     document.querySelectorAll('.piece').forEach((piece) => {
       piece.addEventListener('click', (e) => {
+        console.log(1);
+        // Check for capture
+        if (this.activePiece) {
+          this.checkIfPieceOnCheckmateCapture(piece);
+        }
+        this.activePiece = piece.dataset.unique;
+
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+        // Check for capture
+        if (this.activePiece) {
+          this.checkIfPieceOnCheckmateCapture(piece);
+        }
+        this.activePiece = piece.dataset.unique;
+
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+
+        // Add background color to active piece
         if (piece.dataset.color === this.move) {
-          // Check for capture
-          if (this.activePiece) {
-            this.checkIfPieceOnCheckmateCapture(piece);
-          }
-          this.activePiece = piece.dataset.unique;
-
-          // Remove any piece that has background color
-          document.querySelectorAll('.piece').forEach((piece) => {
-            piece.style.backgroundColor = '';
-          });
-          // Check for capture
-          if (this.activePiece) {
-            this.checkIfPieceOnCheckmateCapture(piece);
-          }
-          this.activePiece = piece.dataset.unique;
-
-          // Remove any piece that has background color
-          document.querySelectorAll('.piece').forEach((piece) => {
-            piece.style.backgroundColor = '';
-          });
-
-          // Add background color to active piece
           piece.style.backgroundColor = 'green';
         }
       });
@@ -50,6 +52,104 @@ class InternationalChess {
     document.querySelectorAll('.background').forEach((tile) => {
       tile.addEventListener('click', (e) => {
         this.checkIfPieceOnCheckmateMovement(tile);
+      });
+    });
+
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        document.querySelector('.overlay').classList.remove('popup');
+        document.querySelector('.overlay').classList.add('popdown');
+        document.querySelector('main').style.pointerEvents = 'auto';
+        let piece = '';
+        if (button.dataset.piece === 'rook') {
+          piece = `
+          <div class="rook piece" data-piece="rook" data-unique="${this.pawnTransition.dataset.unique}"  data-position="${this.pawnTransition.dataset.position}"
+           data-color="${this.pawnTransition.dataset.color}" 
+          style="grid-area:p${this.pawnTransition.dataset.position};z-index:10;">
+        
+          <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" data-piece="rook" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 298 298" style="fill:${this.pawnTransition.dataset.color};"xml:space="preserve">
+          
+            <path d="M216.923,246.538c3.457-6.556,9.963-22.777-1.666-39.137C200.508,186.65,179.942,125,193.61,83H207V0h-16v17h-16V0h-18v17
+              h-16V0h-17v17h-16V0H91v83h14.057c13.668,42-6.98,103.65-21.73,124.401c-11.629,16.359-5.373,32.706-1.916,39.262
+              C77.347,247.044,74,250.337,74,254.5v18c0,4.418,3.915,8.5,8.333,8.5H83v17h132v-17h1.333c4.418,0,7.667-4.082,7.667-8.5v-18
+              C224,250.338,220.986,246.92,216.923,246.538z"/>
+          
+          </svg>
+          </div>
+          `;
+        }
+        if (button.dataset.piece === 'knight') {
+          piece = `
+          <div class="knight piece" data-piece="knight" data-unique="${this.pawnTransition.dataset.unique}"  data-position="${this.pawnTransition.dataset.position}"
+           data-color="${this.pawnTransition.dataset.color}" 
+          style="grid-area:p${this.pawnTransition.dataset.position};z-index:10;">
+       
+           
+              
+            <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+               viewBox="0 0 32 32" style="fill:${this.pawnTransition.dataset.color};" xml:space="preserve">
+            <g>
+              <path d="M7.2,16l1.1-0.2c1.6-0.3,3.3-0.5,5-0.7c-2.4,2.3-3.9,5.3-4.7,7.9h14.7c0.4-1.5,1.1-3,2.3-4.1l0.2-0.2
+                c0.2-0.2,0.3-0.4,0.3-0.6C26.6,13,24.2,8,19.8,5.3c-0.8-1.4-2-2.4-3.6-2.9l-0.9-0.3C15,2,14.7,2,14.4,2.2C14.2,2.4,14,2.7,14,3v2.4
+                l-1.4,0.7C12.2,6.3,12,6.6,12,7v0.5l-4.7,3.1C6.5,11.1,6,12.1,6,13.1V15c0,0.3,0.1,0.6,0.4,0.8C6.6,16,6.9,16,7.2,16z"/>
+              <path d="M6.8,25C6.3,25.5,6,26.2,6,27v2c0,0.6,0.4,1,1,1h18c0.6,0,1-0.4,1-1v-2c0-0.8-0.3-1.5-0.8-2H6.8z"/>
+            </g>
+            </svg>
+          </div>
+          
+          `;
+        }
+        if (button.dataset.piece === 'bishop') {
+          piece = `
+       
+          <div class="bishop piece" data-piece="bishop" data-unique="${this.pawnTransition.dataset.unique}"  data-position="${this.pawnTransition.dataset.position}"
+          data-color="${this.pawnTransition.dataset.color}" 
+         style="grid-area:p${this.pawnTransition.dataset.position};z-index:10;">
+      
+          <?xml version="1.0" encoding="iso-8859-1"?>
+          <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 297.08 297.08" style="fill:${this.pawnTransition.dataset.color};"  xml:space="preserve">
+            <path d="M206.873,255.08h-3.41c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.137-39.546-24.448-64.4h3.57
+              c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.249-8-7.667-8h-4.333v-4.285c13-8.971,20.511-23.502,20.511-39.914
+              c0-10.332-7.011-26.11-15.819-41.721l-18.553,18.595c-3.111,3.111-8.182,3.111-11.294,0.001l-0.921-0.933
+              c-3.111-3.11-3.106-8.202,0.005-11.313l21.676-21.674c-4.444-7.069-8.869-13.678-12.703-19.224
+              c2.881-2.93,4.663-6.944,4.663-11.379C165.106,7.268,157.841,0,148.874,0c-8.967,0-16.234,7.268-16.234,16.233
+              c0,4.434,1.781,8.448,4.662,11.379c-14.585,21.101-37.94,57.587-37.94,76.269c0,16.853,8.178,31.724,21.178,40.625v3.574h-4.667
+              c-4.418,0-8.333,3.582-8.333,8v1c0,4.418,3.915,8,8.333,8h3.571c0.689,24.855-15.547,53.495-24.448,64.4
+              c-9.031,11.064-2.926,22.263-0.712,25.6h-3.411c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118v-17.069
+              c4-0.493,7-3.853,7-7.931v-9C214.54,258.662,211.291,255.08,206.873,255.08z"/>
+          </svg>
+          </div>
+          `;
+        }
+        if (button.dataset.piece === 'queen') {
+          piece = `
+          
+          <div class="queen piece" data-piece="queen" data-unique="${this.pawnTransition.dataset.unique}"  data-position="${this.pawnTransition.dataset.position}"
+          data-color="${this.pawnTransition.dataset.color}" 
+         style="grid-area:p${this.pawnTransition.dataset.position};z-index:10;">
+          <?xml version="1.0" encoding="iso-8859-1"?>
+      <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         viewBox="0 0 297.77 297.77"style="fill:${this.pawnTransition.dataset.color};" xml:space="preserve">
+        <path d="M207.218,255.77h-3.369c2.214-3.337,8.32-14.536-0.712-25.6c-8.9-10.905-25.129-39.546-24.438-64.4h3.519
+          c4.418,0,7.667-3.582,7.667-8v-1c0-4.418-3.582-8-8-8c4.418,0,8-3.582,8-8v-1c0-4.418-3.249-8-7.667-8h-4.626
+          c-2.064-21.741,1.078-43.054,5.959-54.666c1.86-4.425,4.118-7.79,6.296-10.334h1.371c4.418,0,7.667-3.582,7.667-8v-1
+          c0-4.418-3.249-8-7.667-8h-9.8c-1.803-10.896-8.998-19.966-18.755-24.383c1.783-2.607,2.829-5.757,2.829-9.154
+          C165.492,7.267,158.227,0,149.26,0s-16.234,7.267-16.234,16.232c0,3.385,1.037,6.525,2.809,9.127
+          c-9.788,4.406-17.01,13.49-18.816,24.41h-10.8c-4.418,0-8.333,3.582-8.333,8v1c0,4.418,3.915,8,8.333,8h2.371
+          c2.178,2.544,4.436,5.909,6.296,10.334c4.881,11.612,8.023,32.925,5.959,54.666h-4.626c-4.418,0-8.333,3.582-8.333,8v1
+          c0,4.418,3.582,8,8,8c-4.418,0-8,3.582-8,8v1c0,4.418,3.915,8,8.333,8h3.602c0.692,24.854-15.536,53.495-24.438,64.4
+          c-9.031,11.063-2.926,22.263-0.712,25.6h-3.452c-4.418,0-8.333,3.582-8.333,8v9c0,4.078,3,7.438,7,7.931v17.069h118V280.7
+          c4-0.493,7-3.853,7-7.931v-9C214.885,259.352,211.636,255.77,207.218,255.77z"/>
+      
+      </svg>
+      </div>
+          `;
+        }
+        this.pawnTransition = undefined;
+        let main = document.querySelector('main');
+        main.innerHTML += piece;
       });
     });
   }
@@ -514,6 +614,13 @@ style="grid-area:p85;z-index:10;">
     return allowablePieceMovement;
   }
 
+  changingPawn(piece) {
+    document.querySelector('.overlay').classList.remove('popdown');
+    document.querySelector('.overlay').classList.add('popup');
+    document.querySelector('main').style.pointerEvents = 'none';
+    this.pawnTransition = piece;
+    piece.remove();
+  }
   // Pawn movement
   //TODO: pawn turn to queen,rook or bishop after reaching other end
   pawnMovement(piece, tile) {
@@ -533,6 +640,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
             if (piece.dataset.firstmove === 'true') {
               piece.dataset.firstmove = false;
             }
@@ -568,8 +678,8 @@ style="grid-area:p85;z-index:10;">
   }
   // Pawn capture
   pawnCapture(oldpiece, piece) {
+    let wrongInput = true;
     if (oldpiece.dataset.piece === 'pawn') {
-      let wrongInput = true;
       const oldpieceCoordinate = oldpiece.dataset.position * 1;
       const pieceCoordinate = piece.dataset.position * 1;
       const allowablePieceMovement =
@@ -590,6 +700,7 @@ style="grid-area:p85;z-index:10;">
         }
       }
     }
+    return wrongInput;
   }
 
   //Calculate knight movement
@@ -644,6 +755,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -698,6 +812,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -950,6 +1067,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -1008,6 +1128,9 @@ style="grid-area:p85;z-index:10;">
             piece.dataset.position = tile.dataset.position;
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -1066,6 +1189,9 @@ style="grid-area:p85;z-index:10;">
             piece.style.backgroundColor = '';
             this.activePiece = undefined;
             this.kingPosition[piece.dataset.color] = tile.dataset.position * 1;
+            this.move === 'white'
+              ? (this.move = 'black')
+              : (this.move = 'white');
           }
         });
       }
@@ -1187,6 +1313,7 @@ style="grid-area:p85;z-index:10;">
   }
   checkIfPieceOnCheckmateMovement(tile) {
     // Check if piece king is on check
+    let didPawnMove = '';
     document.querySelectorAll('.piece').forEach((piece) => {
       if (piece.dataset.unique === this.activePiece) {
         const opponentColor =
@@ -1228,15 +1355,30 @@ style="grid-area:p85;z-index:10;">
         }
 
         if (piece.dataset.color === this.move) {
-          this.pawnMovement(piece, tile);
+          didPawnMove = this.pawnMovement(piece, tile);
           this.knightMovement(piece, tile);
           this.rookMovement(piece, tile);
           this.bishopMovement(piece, tile);
           this.queenMovement(piece, tile);
           this.kingMovement(piece, tile);
-          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
         }
 
+        if (!didPawnMove) {
+          if (
+            piece.dataset.color === 'white' &&
+            piece.dataset.position > 80 &&
+            piece.dataset.position < 89
+          ) {
+            this.changingPawn(piece);
+          }
+          if (
+            piece.dataset.color === 'black' &&
+            piece.dataset.position > 10 &&
+            piece.dataset.position < 19
+          ) {
+            this.changingPawn(piece);
+          }
+        }
         const allMyMovement = this.calculateAllMovement(piece.dataset.color);
         if (allMyMovement.includes(this.kingPosition[opponentColor])) {
           document.querySelectorAll('.piece').forEach((piece2) => {
@@ -1255,6 +1397,7 @@ style="grid-area:p85;z-index:10;">
     });
   }
   checkIfPieceOnCheckmateCapture(piece) {
+    let didPawnCapture = '';
     // Check if piece king is on check
     document.querySelectorAll('.piece').forEach((oldpiece) => {
       if (
@@ -1295,14 +1438,29 @@ style="grid-area:p85;z-index:10;">
           return;
         }
 
-        if (piece.dataset.color != this.move) {
-          this.pawnCapture(oldpiece, piece);
+        if (oldpiece.dataset.color == this.move) {
+          didPawnCapture = this.pawnCapture(oldpiece, piece);
           this.knightCapture(oldpiece, piece);
           this.rookCapture(oldpiece, piece);
           this.bishopCapture(oldpiece, piece);
           this.queenCapture(oldpiece, piece);
           this.kingCapture(oldpiece, piece);
-          this.move === 'white' ? (this.move = 'black') : (this.move = 'white');
+        }
+        if (!didPawnCapture) {
+          if (
+            oldpiece.dataset.color === 'white' &&
+            piece.dataset.position > 80 &&
+            piece.dataset.position < 89
+          ) {
+            this.changingPawn(oldpiece);
+          }
+          if (
+            oldpiece.dataset.color === 'black' &&
+            piece.dataset.position > 10 &&
+            piece.dataset.position < 19
+          ) {
+            this.changingPawn(oldpiece);
+          }
         }
         const allMyMovement = this.calculateAllMovement(oldpiece.dataset.color);
         if (allMyMovement.includes(this.kingPosition[opponentColor])) {

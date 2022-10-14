@@ -9,8 +9,13 @@
     <title>Chess</title>
 </head>
 <body>
+    <section class="overlay popdown">
+        <button data-piece="rook">Rook</button>
+        <button data-piece='knight'>Knight</button>
+        <button data-piece="bishop">Bishop</button>
+        <button data-piece="queen">Queen</button>
+    </section>
     <main>
-       
     </main>
 </body>
 </html>
