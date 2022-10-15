@@ -12,6 +12,7 @@ class InternationalChess {
   move = 'white';
   activePiece = undefined;
   pawnTransition = undefined;
+  pieceEventListeners = [];
 
   constructor() {
     this.setTiles();
@@ -110,12 +111,44 @@ class InternationalChess {
         }
         this.pawnTransition = undefined;
         this.main.insertAdjacentHTML('beforeend', piece);
+
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.addEventListener('click', (e) => {
+            // Check for capture
+            console.log(1);
+            if (this.activePiece) {
+              this.checkIfPieceOnCheckmateCapture(piece);
+            }
+            this.activePiece = piece.dataset.unique;
+
+            // Remove any piece that has background color
+            document.querySelectorAll('.piece').forEach((piece) => {
+              piece.style.backgroundColor = '';
+            });
+            // Check for capture
+            if (this.activePiece) {
+              this.checkIfPieceOnCheckmateCapture(piece);
+            }
+            this.activePiece = piece.dataset.unique;
+
+            // Remove any piece that has background color
+            document.querySelectorAll('.piece').forEach((piece) => {
+              piece.style.backgroundColor = '';
+            });
+
+            // Add background color to active piece
+            if (piece.dataset.color === this.move) {
+              piece.style.backgroundColor = 'green';
+            }
+          });
+        });
       });
     });
     // Adding eventlisteners to all chess pieces and also check for capture
     document.querySelectorAll('.piece').forEach((piece) => {
       piece.addEventListener('click', (e) => {
         // Check for capture
+        console.log(1);
         if (this.activePiece) {
           this.checkIfPieceOnCheckmateCapture(piece);
         }
