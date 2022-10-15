@@ -16,45 +16,6 @@ class InternationalChess {
   constructor() {
     this.setTiles();
 
-    // Adding eventlisteners to all chess pieces and also check for capture
-    document.querySelectorAll('.piece').forEach((piece) => {
-      piece.addEventListener('click', (e) => {
-        console.log(1);
-        // Check for capture
-        if (this.activePiece) {
-          this.checkIfPieceOnCheckmateCapture(piece);
-        }
-        this.activePiece = piece.dataset.unique;
-
-        // Remove any piece that has background color
-        document.querySelectorAll('.piece').forEach((piece) => {
-          piece.style.backgroundColor = '';
-        });
-        // Check for capture
-        if (this.activePiece) {
-          this.checkIfPieceOnCheckmateCapture(piece);
-        }
-        this.activePiece = piece.dataset.unique;
-
-        // Remove any piece that has background color
-        document.querySelectorAll('.piece').forEach((piece) => {
-          piece.style.backgroundColor = '';
-        });
-
-        // Add background color to active piece
-        if (piece.dataset.color === this.move) {
-          piece.style.backgroundColor = 'green';
-        }
-      });
-    });
-
-    // Adding eventlisteners to chess tiles for piece movement
-    document.querySelectorAll('.background').forEach((tile) => {
-      tile.addEventListener('click', (e) => {
-        this.checkIfPieceOnCheckmateMovement(tile);
-      });
-    });
-
     document.querySelectorAll('button').forEach((button) => {
       button.addEventListener('click', (e) => {
         document.querySelector('.overlay').classList.remove('popup');
@@ -148,8 +109,44 @@ class InternationalChess {
           `;
         }
         this.pawnTransition = undefined;
-        let main = document.querySelector('main');
-        main.innerHTML += piece;
+        this.main.insertAdjacentHTML('beforeend', piece);
+      });
+    });
+    // Adding eventlisteners to all chess pieces and also check for capture
+    document.querySelectorAll('.piece').forEach((piece) => {
+      piece.addEventListener('click', (e) => {
+        // Check for capture
+        if (this.activePiece) {
+          this.checkIfPieceOnCheckmateCapture(piece);
+        }
+        this.activePiece = piece.dataset.unique;
+
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+        // Check for capture
+        if (this.activePiece) {
+          this.checkIfPieceOnCheckmateCapture(piece);
+        }
+        this.activePiece = piece.dataset.unique;
+
+        // Remove any piece that has background color
+        document.querySelectorAll('.piece').forEach((piece) => {
+          piece.style.backgroundColor = '';
+        });
+
+        // Add background color to active piece
+        if (piece.dataset.color === this.move) {
+          piece.style.backgroundColor = 'green';
+        }
+      });
+    });
+
+    // Adding eventlisteners to chess tiles for piece movement
+    document.querySelectorAll('.background').forEach((tile) => {
+      tile.addEventListener('click', (e) => {
+        this.checkIfPieceOnCheckmateMovement(tile);
       });
     });
   }
@@ -623,7 +620,7 @@ style="grid-area:p85;z-index:10;">
   }
   // Pawn movement
   //TODO: pawn turn to queen,rook or bishop after reaching other end
-  pawnMovement(piece, tile) {
+  pawnMovement(piece, tile, calcormove = true) {
     let wrongInput = true;
     if (
       piece.dataset.piece === 'pawn' &&
@@ -635,16 +632,18 @@ style="grid-area:p85;z-index:10;">
         allowablePieceMovement.forEach((movement) => {
           if (tile.dataset.position == movement) {
             wrongInput = false;
-            const tileCoordinate = tile.dataset.position;
-            piece.style.gridArea = 'p' + tileCoordinate;
-            piece.dataset.position = tile.dataset.position;
-            piece.style.backgroundColor = '';
-            this.activePiece = undefined;
-            this.move === 'white'
-              ? (this.move = 'black')
-              : (this.move = 'white');
-            if (piece.dataset.firstmove === 'true') {
-              piece.dataset.firstmove = false;
+            if (calcormove) {
+              const tileCoordinate = tile.dataset.position;
+              piece.style.gridArea = 'p' + tileCoordinate;
+              piece.dataset.position = tile.dataset.position;
+              piece.style.backgroundColor = '';
+              this.activePiece = undefined;
+              this.move === 'white'
+                ? (this.move = 'black')
+                : (this.move = 'white');
+              if (piece.dataset.firstmove === 'true') {
+                piece.dataset.firstmove = false;
+              }
             }
           }
         });
@@ -1330,12 +1329,12 @@ style="grid-area:p85;z-index:10;">
           if (piece.dataset.piece === 'king')
             this.kingPosition[piece.dataset.color] = pieceOriginalPosition;
           const possibleMovement = [
-            !this.pawnMovement(piece, tile),
-            !this.knightMovement(piece, tile),
-            !this.rookMovement(piece, tile),
-            !this.bishopMovement(piece, tile),
-            !this.queenMovement(piece, tile),
-            !this.kingMovement(piece, tile),
+            !this.pawnMovement(piece, tile, false),
+            !this.knightMovement(piece, tile, false),
+            !this.rookMovement(piece, tile, false),
+            !this.bishopMovement(piece, tile, false),
+            !this.queenMovement(piece, tile, false),
+            !this.kingMovement(piece, tile, false),
           ];
           if (possibleMovement.includes(true)) {
             document.querySelectorAll('.piece').forEach((piece2) => {
@@ -1449,15 +1448,15 @@ style="grid-area:p85;z-index:10;">
         if (!didPawnCapture) {
           if (
             oldpiece.dataset.color === 'white' &&
-            piece.dataset.position > 80 &&
-            piece.dataset.position < 89
+            oldpiece.dataset.position > 80 &&
+            oldpiece.dataset.position < 89
           ) {
             this.changingPawn(oldpiece);
           }
           if (
             oldpiece.dataset.color === 'black' &&
-            piece.dataset.position > 10 &&
-            piece.dataset.position < 19
+            oldpiece.dataset.position > 10 &&
+            oldpiece.dataset.position < 19
           ) {
             this.changingPawn(oldpiece);
           }
